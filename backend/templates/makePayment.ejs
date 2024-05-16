@@ -1,0 +1,31 @@
+<%- include('header'); %>
+
+
+    <h1>Payment :</h1>
+    <form action="/makePayment" method="post">
+        <div class="input">
+            <div class="selection1">
+                <label for="carNo"> Card number:</label>
+                <br>
+                <input type="text" name="cardNo" id="cardNo" required>
+                <br>
+                <label for="cardOwner">Card owner:</label>
+                <br>
+                <input type="text" name="cardOwner" id="cardOwner" required>
+                <br>
+                <label for="expDate">Expired date</label>
+                <br>
+                <input type="text" name="expDate" id="expDate" required>
+                <br>
+                </div>
+                </div>
+                <div class="summary">
+                    <h1>Summary: </h1>
+                    <h4>Price (AUD): <%= flightPrice  %></h4>
+                    <h4>Service (AUD): <%= servicePrice  %></h4>
+                    <h4>Total (AUD): <%= total %></h4>
+
+                </div>
+        <button type="submit" class="button-17">Next</button>
+    </form>
+    <%- include('footer'); %>

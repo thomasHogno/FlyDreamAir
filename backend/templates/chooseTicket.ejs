@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="images/title_icon.png">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <!-- <script src="booking.js" defer></script> -->
+    <link rel="stylesheet" href="booking.css">
+    <title>FlyDream Airline</title>
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="logo">
+            <div class="navLogo">FlyDream Air</div>
+        </div>
+    </nav>
+    <nav class="booking-nav">
+        <span class="tab active" data-tab="flights">FLIGHTS</span>
+        <span class="tab" data-tab="passengers">PASSENGERS</span>
+        <span class="tab" data-tab="seats">SEATS</span>
+        <span class="tab" data-tab="payment">PAYMENT</span>
+    </nav>
+    <div id="flights" class="tab-content">
+        <div class="flight-heading-container">
+            <h1 id="flight-heading">
+                <% if (message) { %>
+                    <div class="no-flight-message">
+                        <h1><%= message %></h1>
+                    </div>
+                <% } else { %>
+                    <h1>Ticket Confirmation</h1>
+            </h1>
+                    <form method="post" action="/chooseTicket">
+                        <select name="flightNo" id="flightNo">
+                            <% flights.forEach(flight => { %>
+                                <option value="<%= flight.flightNo %>">
+                                <div class="flight-details-container"> 
+                                    <div class="flight-details">
+                                        <div class="flight-details-row">
+                                            <div class="detail row1"><%= flight.departureCity %></div>
+                                            <div class="detail row1">------<span>&#9992;</span>------</div>
+                                            <div class="detail row1"><%= flight.destinationCity %></div>
+                                            <div class="detail row1"></div>
+                                            <div class="detail row1 buttonCell">
+                                                <button class="btn selectButtons"><%= flight.price %> AUD</button>
+                                            </div>
+                                        </div>
+                                        <div class="flight-details-row">
+                                            <div class="detail row2"><%= flight.departureTime %></div>
+                                            <div class="detail row2"></div>
+                                            <div class="detail row2"><%= flight.duration %></div>
+                                            <div class="detail row2"><%= flight.flightNo ? flight.flightNo : "Flight Number N/A" %></div>
+                                            <div class="detail row2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </option>
+                                <% }); %>
+                        </select>
+                        <button type="submit">Submit</button>
+                    </form>
+                <% } %>
+        </div>
+    </div>
+</body>
+</html>
