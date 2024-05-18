@@ -30,8 +30,7 @@ app.use(bodyParser.json());
 
 mongoose
   .connect(
-    "mongodb+srv://replace-with-your-username:replace-with-your-password-for-this-collection@flydreamdb.pgvinhz.mongodb.net/?retryWrites=true&w=majority&appName=FlyDreamDB"
-  )
+    "mongodb+srv://phuongdao:4NIfXCvBa0sd3AYT@flydreamdb.pgvinhz.mongodb.net/?retryWrites=true&w=majority&appName=FlyDreamDB"  )
   .then(() => {
     console.log("Connected to database!");
     app.listen(port, () => {
@@ -44,7 +43,7 @@ mongoose
 
 loggedIn = true
 app.get("/bookOnline",(req,res)=>{
-res.render('searchFlight');
+res.render('searchFlight', {title:"Search Flight"});
 });
 
 app.get('/login',(req,res)=>{
@@ -92,28 +91,89 @@ app.get('/index',(req,res)=>{
 
 app.post('/searchFlight', async (req,res)=>{
     const inputFlight = req.body;
+    console.log(inputFlight)
     const flights = await Flight.find({"departureCity":capitalize(inputFlight.departureCity), "destinationCity": capitalize(inputFlight.destinationCity)})   
+    const flightType = req.body.flightType;
+
     req.session.flights = flights;
     req.session.inputFlight = inputFlight;
+    req.session.flightType = flightType;
+
+    const returnDate = req.body.returnDate;
+    if (flightType === 'Round Trip') {
+        req.session.returnDate = returnDate;
+    }
+    console.log(flightType);
+    console.log(returnDate);
+
     res.redirect('/chooseTicket');
 })
 
- app.get('/chooseTicket',(req,res)=>{
-    const flights = req.session.flights || [];
+const moment = require('moment');
+
+app.get('/chooseTicket', (req, res) => {
+    let flights = req.session.flights || [];
     const inputFlight = req.session.inputFlight;
     let message = null;
+
+    flights.forEach(flight => {
+        const departureTime = moment(flight.departureTime, 'hh:mm A');
+        const duration = moment.duration(flight.duration, 'hours');
+        const arrivalTime = departureTime.clone().add(duration);
+
+        flight.departureDate = departureTime.format('lll');
+        flight.arrivalDate = arrivalTime.format('lll');
+    });
+
     if (flights.length === 0) {
-            message = `No available flights between ${inputFlight.departureCity} and ${inputFlight.destinationCity}`
+        message = `No available flights between ${inputFlight.departureCity} and ${inputFlight.destinationCity}`;
     }
-    res.render('chooseTicket',{flights,message});
+
+    res.render('chooseTicket', { "title": "Ticket", flights, message });
 });
 
-app.post('/chooseTicket',(req,res)=>{
+app.post('/chooseTicket', (req, res) => {
+    const flightType = req.session.flightType;
     const flightNo = req.body.flightNo;
     req.session.flightNo = flightNo;
-    res.redirect('/fillPassengerInfor');
-})
+    req.session.arrivalTime = departureReturnTime;
 
+    if (flightType === 'Round Trip') {
+        res.redirect('/returnTickets');
+    } else {
+        res.redirect('/fillPassengerInfor');
+    }
+});
+
+// RETURN TICKET
+app.get('/returnTickets', (req, res) => {
+    let flights = req.session.flights || [];
+    const inputFlight = req.session.inputFlight;
+    let message = null;
+    
+    console.log(departureReturnTime);
+
+    const departureReturnTime = moment(req.session.arrivalDate, 'hh:mm A');
+    console.log(departureReturnTime);
+    flights.forEach(flight => {
+        const duration = moment.duration(flight.duration, 'hours');
+        const arrivalReturnTime = departureReturnTime.clone().add(duration);
+
+        flight.departureDate = departureReturnTime.format('lll');
+        flight.arrivalDate = arrivalReturnTime.format('lll');
+    });
+
+    if (flights.length === 0) {
+        message = `No available flights between ${inputFlight.destinationCity} and ${inputFlight.departureCity}`;
+    }
+
+    res.render('returnTickets', { "title": "Return Ticket", flights, message });
+});
+
+// RETURN TICKET -> FILL PASSENGER INFO
+app.post('/returnTickets', (req,res) => {
+    res.redirect('fillPassengerInfor');
+})
 
 
 app.get('/fillPassengerInfor',(req,res)=>{
@@ -189,6 +249,3 @@ app.post('/makePayment',(req,res)=>{
 function capitalize(string) {
     return string.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
-
-
-

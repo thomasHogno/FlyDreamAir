@@ -50,81 +50,6 @@ nav{
     gap: 1rem;
 }
 
-/* Header styles */
-.login-btn {
-    background-color: #007bff;
-    color: #fff;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none; 
-}
-
-.login-btn:hover {
-    background-color: #0056b3;
-}
-
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 10px; 
-    display: flex; 
-    justify-content: space-between; 
-}
-
-.logo img {
-    height: 60px; 
-    width: auto;
-    margin-right: 15px; 
-}
-
-.logo{
-    display: inline-block;
-}
-
-.websiteTitle {
-    font-family: 'Arial', sans-serif;
-    font-size: 48px;
-    color: #FFFFFF;
-    transition: color 0.3s ease-in-out; 
-}
-
-.websiteTitle:hover {
-    color: #A4A4A4; 
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-}
-
-/* Header - Subheading */
-#subheading {
-    background-color: #f4f4f4; 
-    padding: 10px; 
-    position: relative; 
-    left: 0; 
-    width: 100%;
-}
-
-#subheading ul {
-	/* remove defaults */
-    list-style-type: none; 
-    margin: 0; 
-    padding: 0; 
-    text-align: left; 
-}
-
-#subheading ul li {
-    display: inline;
-    margin-right: 10px; 
-}
-
-#subheading ul li a {
-    color: #333; 
-    text-decoration: none; 
-}
 
 .navLinks{
     list-style: none;
@@ -200,16 +125,17 @@ header {
     background-color: var(--primaryColor);
 }
 
-.trip-select p {
+.flight-type p {
+    margin-right: 50%;
     display: inline-block;
 }
 
-.trip-select span{
+.flight-type span {
+    margin-right: 40px;
     display: inline-block;
-    margin-right: 10px;
 }
 
-.trip-selection input[type="radio"] {
+.flight-type input[type="radio"] {
     margin-right: 10px;
 }
 
@@ -240,8 +166,6 @@ header {
     /* display: flex; */
 }
 
-
-
 .booking-container .input-group{
     width: 100%;
     position: relative;
@@ -251,10 +175,10 @@ header {
     position: absolute;
     top: 0;
     left: 0;
-    transform: translateY(-50%);
     font-size: 0.8rem;
     font-weight: 400;
     color: var(--textDark);
+    transform: translateY(-50%);
     pointer-events: none;
     transform: 0.3s;
 }
@@ -269,11 +193,6 @@ form input{
     border-bottom: 1px solid var(--primaryColor);
     color: var(--textDark);
 }
-
-/* .booking-container input:valid ~ label{
-    font-size: 0.8rem;
-    top: 0;
-} */
 
 .booking-container .form-group p{
     margin-top: 0.5rem;
@@ -329,7 +248,6 @@ select {
 .trendings-section{
     border: none;
     width: 100%;
-    /* box-shadow: 5px 5px 30px rgba(210, 6, 6, 0.1); */
 }
 
 .trendings{
