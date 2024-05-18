@@ -13,6 +13,9 @@ const Passenger = require("./models/passenger.js");
 const Flight = require("./models/flight.js");
 const { title } = require("process");
 const Service = require("./models/service.js");
+
+
+
 //register view engine
 app.set('view engine', 'ejs');
 app.set('views','templates');
@@ -27,6 +30,7 @@ app.use(session({
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
 
 mongoose
   .connect(
@@ -91,20 +95,26 @@ app.get('/index',(req,res)=>{
 
 app.post('/searchFlight', async (req,res)=>{
     const inputFlight = req.body;
-    console.log(inputFlight)
-    const flights = await Flight.find({"departureCity":capitalize(inputFlight.departureCity), "destinationCity": capitalize(inputFlight.destinationCity)})   
+    console.log(inputFlight);
+    const flights = await Flight.find({
+        "departureCity":capitalize(inputFlight.departureCity), 
+        "destinationCity": capitalize(inputFlight.destinationCity)
+    });
+
     const flightType = req.body.flightType;
 
     req.session.flights = flights;
     req.session.inputFlight = inputFlight;
     req.session.flightType = flightType;
 
-    const returnDate = req.body.returnDate;
     if (flightType === 'Round Trip') {
-        req.session.returnDate = returnDate;
+        req.session.returnDate = req.body.returnDate;
+    } else {
+        req.session.returnDate = null; // Clear return date for one way trip
     }
-    console.log(flightType);
-    console.log(returnDate);
+
+    console.log(`Flight Type: ${flightType}`);
+    console.log(`Return Date: ${req.session.returnDate}`);
 
     res.redirect('/chooseTicket');
 })
@@ -136,7 +146,15 @@ app.post('/chooseTicket', (req, res) => {
     const flightType = req.session.flightType;
     const flightNo = req.body.flightNo;
     req.session.flightNo = flightNo;
-    req.session.arrivalTime = departureReturnTime;
+
+    const selectedFlight = req.session.flights.find(flight => flight.flightNo === flightNo);
+
+     if (selectedFlight) {
+        req.session.selectedFlight = selectedFlight;
+        req.session.arrivalTime = selectedFlight.arrivalDate;
+    }
+
+    console.log(`Selected Flight: ${JSON.stringify(req.session.selectedFlight)}`);
 
     if (flightType === 'Round Trip') {
         res.redirect('/returnTickets');
@@ -146,34 +164,55 @@ app.post('/chooseTicket', (req, res) => {
 });
 
 // RETURN TICKET
-app.get('/returnTickets', (req, res) => {
-    let flights = req.session.flights || [];
-    const inputFlight = req.session.inputFlight;
+// RETURN TICKET
+app.get('/returnTickets', async (req, res) => {
+    const selectedFlight = req.session.selectedFlight;
+    const returnDate = req.session.returnDate;
     let message = null;
-    
-    console.log(departureReturnTime);
 
-    const departureReturnTime = moment(req.session.arrivalDate, 'hh:mm A');
-    console.log(departureReturnTime);
-    flights.forEach(flight => {
-        const duration = moment.duration(flight.duration, 'hours');
-        const arrivalReturnTime = departureReturnTime.clone().add(duration);
-
-        flight.departureDate = departureReturnTime.format('lll');
-        flight.arrivalDate = arrivalReturnTime.format('lll');
-    });
-
-    if (flights.length === 0) {
-        message = `No available flights between ${inputFlight.destinationCity} and ${inputFlight.departureCity}`;
+    if (!selectedFlight || !returnDate) {
+        message = 'Return date or selected flight is not set.';
+        return res.render('returnTickets', { "title": "Return Ticket", flights: [], message });
     }
 
-    res.render('returnTickets', { "title": "Return Ticket", flights, message });
+    // Find return flights based on the selected flight's destination and departure cities
+    const returnFlights = await Flight.find({
+        "departureCity": capitalize(selectedFlight.destinationCity),
+        "destinationCity": capitalize(selectedFlight.departureCity),
+        "departureTime": { 
+            $gte: moment(returnDate).startOf('day').toISOString(), 
+            $lt: moment(returnDate).endOf('day').toISOString()
+        }
+    });
+
+    // If no return flights are found, display a message
+    if (returnFlights.length === 0) {
+        message = `No available return flights between ${selectedFlight.destinationCity} and ${selectedFlight.departureCity} on ${returnDate}`;
+    } else {
+        // Format departure and arrival dates for each return flight
+        returnFlights.forEach(flight => {
+            const departureTime = moment(flight.departureTime, 'hh:mm A');
+            const duration = moment.duration(flight.duration, 'hours');
+            const arrivalTime = departureTime.clone().add(duration);
+
+            flight.departureDate = departureTime.format('lll');
+            flight.arrivalDate = arrivalTime.format('lll');
+        });
+    }
+
+    // Render the returnTickets page with the return flight data
+    res.render('returnTickets', { "title": "Return Ticket", flights: returnFlights, message });
 });
 
+
+
 // RETURN TICKET -> FILL PASSENGER INFO
-app.post('/returnTickets', (req,res) => {
-    res.redirect('fillPassengerInfor');
-})
+app.post('/returnTickets', (req, res) => {
+    const flightNo = req.body.flightNo;
+    req.session.returnFlightNo = flightNo;
+
+    res.redirect('/fillPassengerInfor');
+});
 
 
 app.get('/fillPassengerInfor',(req,res)=>{

@@ -468,9 +468,19 @@ select {
             }
 
             // Check if return date is filled, only if "Round Trip" is selected
-            if ($('input[name="trip-type"]:checked').val() === 'Round Trip' && !$('#returnDate').val()) {
-                isValid = false;
-                errorMessage += 'Please fill in the return date.\n';
+            if ($('input[name="flightType"]:checked').val() === 'Round Trip') {
+                    if (!$('#returnDate').val()) {
+                        isValid = false;
+                        errorMessage += 'Please fill in the return date.\n';
+                    } else {
+                        // Check if return date is not earlier than departure date
+                        let departureDate = new Date($('#departureDate').val());
+                        let returnDate = new Date($('#returnDate').val());
+                        if (returnDate < departureDate) {
+                            isValid = false;
+                            errorMessage += 'Return date cannot be earlier than the departure date.\n';
+                        }
+                    }
             }
 
             // If the form is not valid, prevent submission and alert the user
