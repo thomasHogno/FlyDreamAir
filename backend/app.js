@@ -30,8 +30,7 @@ app.use(bodyParser.json());
 
 mongoose
   .connect(
-    "mongodb+srv://replace-with-your-username:replace-with-your-password-for-this-collection@flydreamdb.pgvinhz.mongodb.net/?retryWrites=true&w=majority&appName=FlyDreamDB"
-  )
+    "mongodb+srv://csit214:jVxpHaaTBrO7AhY6@flydreamdb.pgvinhz.mongodb.net/?retryWrites=true&w=majority&appName=FlyDreamDB"  )
   .then(() => {
     console.log("Connected to database!");
     app.listen(port, () => {
