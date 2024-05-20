@@ -1,8 +1,8 @@
 <%- include('header'); %>
+
 <% if (messages.error) { %>
     <%= messages.error %>
 <% } %>
-
     <div class="container">
         <h2>Login</h2>
         <form action="/login" method="post">
@@ -18,7 +18,7 @@
 
             <button type="submit">Login</button>
         </form>
-        <p>Don't have an account? <a href="/register" class="btn-secondary">Create Account</a></p>
+        <p>Don't have an account? <a href="/register">Create Account</a></p>
     </div>
     <%- include('footer'); %>
 

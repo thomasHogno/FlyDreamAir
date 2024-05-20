@@ -1,3 +1,10 @@
+// here
+
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
+// here
+
 const mongoose = require("mongoose"); 
 // const jwt = require("jsonwebtoken");
 // const multer = require("multer");
@@ -14,6 +21,22 @@ const Flight = require("./models/flight.js");
 const { title } = require("process");
 const Service = require("./models/service.js");
 
+// here
+const bcrypt = require('bcrypt')
+const passport = require('passport')
+const flash = require('express-flash')
+const methodOverride = require('method-override')
+
+const initializePassport = require('./templates/passport-config.js');
+
+initializePassport(
+    passport, 
+    email => users.find(user => user.email === email),
+    id => users.find(user => user.id === id),
+)
+
+const users = []
+// here
 
 
 //register view engine
@@ -32,6 +55,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 
+// here
+app.use(flash())
+
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(methodOverride('_method'))
+//here
+
 mongoose
   .connect(
     "mongodb+srv://phuongdao:4NIfXCvBa0sd3AYT@flydreamdb.pgvinhz.mongodb.net/?retryWrites=true&w=majority&appName=FlyDreamDB"  )
@@ -45,27 +76,91 @@ mongoose
     console.log("Connection failed!");
   });
 
-loggedIn = true
-app.get("/bookOnline",(req,res)=>{
-res.render('searchFlight', {title:"Search Flight"});
-});
+loggedIn = false
 
-app.get('/login',(req,res)=>{
-    res.render('login',{title:"Login"})
+// here
+
+app.get('/', checkAuthenticated, (req, res) => {
+    res.render('index', { name: req.user.name, title:"Homepage"})
+})
+
+
+app.get('/index',(req,res)=>{
+    res.render("index",{title:"Homepage"})})
+
+
+
+app.get('/login', checkNotAuthenticated, (req, res) => {
+    res.render('login.ejs', {title:"Login"})
+})
+
+app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failureFlash: true
+
+}))
+
+app.get('/register', checkNotAuthenticated, (req, res) => {
+    res.render('register',{title:"register"})
+})
+
+
+
+app.post('/register', checkNotAuthenticated,  async (req, res) => {
+    try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        users.push({
+            id: Date.now().toString(),
+            name: req.body.name,
+            email: req.body.email,
+            password: hashedPassword
+        })
+        res.redirect('/login')
+    } catch {
+        res.redirect('/register')
+    }
+    console.log(users)
 })
 
 app.get('/logout',(req,res)=>{
     res.redirect(`/index?loggedIn=${loggedIn}`);
 })
 
+app.delete('/logout', (req, res, next) => {
+    req.logOut((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/login')
+    })
+})
+
+// here
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.get("/bookOnline",(req,res)=>{
+res.render('searchFlight', {title:"Search Flight"});
+});
+
+
+
 app.get('/dashboard',(req,res)=>{
     res.render('dashboard',{title:"Dashboard","loggedIn":loggedIn})
 })
-
-app.get('/', (req, res) => {
-    res.redirect(`/index?loggedIn=${loggedIn}`);
-});
-
 
 app.get('/contactUs',(req,res)=>{
     res.render('contactUs',{title:"Contact Us",form_submitted: false, loggedIn: loggedIn})
@@ -90,8 +185,6 @@ app.get('/myFlightServices',(req,res)=>{
 app.post('/submit_inquiry',(req,res)=>{
     res.redirect('contactUs',{form_submitted: true})})
 
-app.get('/index',(req,res)=>{
-    res.render("index",{title:"Homepage"})})
 
 app.post('/searchFlight', async (req,res)=>{
     const inputFlight = req.body;
@@ -147,14 +240,12 @@ app.post('/chooseTicket', (req, res) => {
     const flightNo = req.body.flightNo;
     req.session.flightNo = flightNo;
 
-    const selectedFlight = req.session.flights.find(flight => flight.flightNo === flightNo);
+    let selectedFlight = req.session.flights.find(flight => flight.flightNo === flightNo);
 
      if (selectedFlight) {
         req.session.selectedFlight = selectedFlight;
         req.session.arrivalTime = selectedFlight.arrivalDate;
     }
-
-    console.log(`Selected Flight: ${JSON.stringify(req.session.selectedFlight)}`);
 
     if (flightType === 'Round Trip') {
         res.redirect('/returnTickets');
@@ -164,47 +255,39 @@ app.post('/chooseTicket', (req, res) => {
 });
 
 // RETURN TICKET
-// RETURN TICKET
 app.get('/returnTickets', async (req, res) => {
     const selectedFlight = req.session.selectedFlight;
     const returnDate = req.session.returnDate;
     let message = null;
-
+    
     if (!selectedFlight || !returnDate) {
         message = 'Return date or selected flight is not set.';
-        return res.render('returnTickets', { "title": "Return Ticket", flights: [], message });
+        return res.render('returnTickets', { "title": "Return Ticket", flights, message });
     }
 
-    // Find return flights based on the selected flight's destination and departure cities
     const returnFlights = await Flight.find({
         "departureCity": capitalize(selectedFlight.destinationCity),
         "destinationCity": capitalize(selectedFlight.departureCity),
         "departureTime": { 
             $gte: moment(returnDate).startOf('day').toISOString(), 
-            $lt: moment(returnDate).endOf('day').toISOString()
-        }
+            $lt: moment(returnDate).endOf('day').toISOString() }
     });
 
-    // If no return flights are found, display a message
     if (returnFlights.length === 0) {
-        message = `No available return flights between ${selectedFlight.destinationCity} and ${selectedFlight.departureCity} on ${returnDate}`;
+        message = `No available flights between ${selectedFlight.destinationCity} and ${selectedFlight.departureCity} on ${returnDate}`;
     } else {
-        // Format departure and arrival dates for each return flight
         returnFlights.forEach(flight => {
             const departureTime = moment(flight.departureTime, 'hh:mm A');
             const duration = moment.duration(flight.duration, 'hours');
             const arrivalTime = departureTime.clone().add(duration);
-
+    
             flight.departureDate = departureTime.format('lll');
             flight.arrivalDate = arrivalTime.format('lll');
         });
     }
 
-    // Render the returnTickets page with the return flight data
-    res.render('returnTickets', { "title": "Return Ticket", flights: returnFlights, message });
+    res.render('returnTickets', { "title": "Return Ticket", flights, message });
 });
-
-
 
 // RETURN TICKET -> FILL PASSENGER INFO
 app.post('/returnTickets', (req, res) => {
@@ -288,3 +371,23 @@ app.post('/makePayment',(req,res)=>{
 function capitalize(string) {
     return string.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
+
+// here
+
+
+function checkAuthenticated(req, res , next) {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+
+    res.redirect('/login')
+}
+
+function checkNotAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/')
+    }
+    next()
+}
+
+// here
