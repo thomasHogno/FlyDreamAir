@@ -15,6 +15,8 @@
     npm i mongodb
     npm i mongoose
     npm i nodemon
+    npm i bcrypt
+    npm i passport passport-local express-flash
 
 ## Configuration
     Create a .env file in the root directory of the project.
