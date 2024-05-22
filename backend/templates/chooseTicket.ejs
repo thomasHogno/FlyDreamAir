@@ -1,70 +1,304 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="images/title_icon.png">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <!-- <script src="booking.js" defer></script> -->
-    <link rel="stylesheet" href="booking.css">
-    <title>FlyDream Airline</title>
-</head>
-<body>
-    <nav class="main-nav">
-        <div class="logo">
-            <div class="navLogo">FlyDream Air</div>
-        </div>
-    </nav>
-    <nav class="booking-nav">
-        <span class="tab active" data-tab="flights">FLIGHTS</span>
-        <span class="tab" data-tab="passengers">PASSENGERS</span>
-        <span class="tab" data-tab="seats">SEATS</span>
-        <span class="tab" data-tab="payment">PAYMENT</span>
-    </nav>
-    <div id="flights" class="tab-content">
+<%- include('header'); %>
+<style>
+:root{
+    --primaryColor: #333;
+    --primaryColorDark: #334c99;
+    --textDark: #0f172a;
+    --textLight: #64748b;
+    --extraLight: #f1f5f9;
+    --maxWidth: 1200px;
+
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: Arial, sans-serif; 
+}
+
+
+.flight-heading-container {
+    width: 100%;
+    margin: 30px auto; 
+    align-items: center;
+}
+
+#flight-heading {
+    font-weight: 500;
+    font-size: 30px;
+    margin: 30px;
+    margin-right: 40px;
+}
+
+.flight-details-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.flight-details-container.selected .flight-details{
+    background-color: rgb(236, 236, 236); 
+}
+
+.flight-details{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--primaryColor);
+    width: 70%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.flight-details-row{
+    display: flex;
+    margin-left: 10px;
+    padding: 5px;
+}
+
+.detail{
+    flex: 1;
+    text-align: center;
+}
+
+.row1{
+    color: var(--textDark);
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.row2{
+    color: var(--textLight);
+    font-size: 15px;
+}
+
+.btn{
+    padding: .75rem 2rem;
+    outline: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
+    background-color: var(--primaryColor);
+    border-radius: .2rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.buttonCell{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#submitBtn{
+    margin: 40px auto; 
+    font-size: 18px;
+    margin-right: 15%;
+    display: flex;
+    justify-content: right; 
+    align-items: center;
+}
+
+.flight-heading{
+    /* width: 30%; */
+    border: 1px solid var(--primaryColor);
+    background-color: rgb(242, 246, 250);
+    padding-bottom: 20px;
+    margin-top: 20px;
+}
+
+.flight-heading h1{
+    padding: 10px 25px;
+    font-size: 20px;
+    border-bottom: 1px solid var(--primaryColor);
+    font-weight: 500;
+    text-align: center;
+    background-color: var(--primaryColor);
+    color: white;
+    margin-bottom: 10px;
+}
+
+.flight-heading p{
+    font-weight: 400;
+    font-size: 18px;
+    padding: 10px 25px;
+}
+</style>
+<div id="flights" class="tab-content">
+    <h1 id="flight-heading">
+        <% if (message) { %>
+            <div class="no-flight-message">
+                <h1><%= message %></h1>
+            </div>
+        <% } else { %>
+            <h1>Ticket Confirmation</h1>
+        </h1>
         <div class="flight-heading-container">
-            <h1 id="flight-heading">
-                <% if (message) { %>
-                    <div class="no-flight-message">
-                        <h1><%= message %></h1>
+            <form method="post" action="/chooseTicket">
+                <h1>Departure flight:</h1> 
+                <div class="form-row">
+                    <div class="form-group">
+                        <select name="departureFlightClass">
+                            <option value="economy"><div>Economy Class : $0</div></option>
+                            <option value="business"><span>Business Class: $100</span></option>
+                            <option value="first"><span>First Class: $300</span></option>
+                        </select>
                     </div>
-                <% } else { %>
-                    <h1>Ticket Confirmation</h1>
-            </h1>
-                    <form method="post" action="/chooseTicket">
-                        <select name="flightNo" id="flightNo">
-                            <% flights.forEach(flight => { %>
-                                <option value="<%= flight.flightNo %>">
-                                <div class="flight-details-container"> 
-                                    <div class="flight-details">
-                                        <div class="flight-details-row">
-                                            <div class="detail row1"><%= flight.departureCity %></div>
-                                            <div class="detail row1">------<span>&#9992;</span>------</div>
-                                            <div class="detail row1"><%= flight.destinationCity %></div>
-                                            <div class="detail row1"></div>
-                                            <div class="detail row1 buttonCell">
-                                                <button class="btn selectButtons"><%= flight.price %> AUD</button>
-                                            </div>
-                                        </div>
-                                        <div class="flight-details-row">
-                                            <div class="detail row2"><%= flight.departureTime %></div>
-                                            <div class="detail row2"></div>
-                                            <div class="detail row2"><%= flight.duration %></div>
-                                            <div class="detail row2"><%= flight.flightNo ? flight.flightNo : "Flight Number N/A" %></div>
-                                            <div class="detail row2"></div>
-                                        </div>
+                <div class="departure-flight">
+                    <% flights[0].forEach(flight => { %>
+                        <div class="flight-details-container">
+                            <div class="flight-details">
+                                <div class="flight-details-row">
+                                    <div class="detail row1"><%= flight.departureCity %></div>
+                                    <div class="detail row1">>>>>>>>>>>></div>
+                                    <div class="detail row1"><%= flight.destinationCity %></div>
+                                    <div class="detail row1"><%= flight.flightNo ? flight.flightNo : "Flight Number N/A" %></div>
+                                    <div class="detail row1 buttonCell">
+                                        <input type="radio" class="selectButtons" name="departureFlightNo" value="<%= flight.flightNo %>" required> <%= flight.price %> AUD
                                     </div>
                                 </div>
-                                </option>
-                                <% }); %>
+                                <div class="flight-details-row">
+                                    <div class="detail row2"><%= flight.departureDate %></div>
+                                    <div class="detail row2"></div>
+                                    <div class="detail row2"><%= flight.arrivalDate %></div>
+                                    <div class="detail row2"><%= flight.duration %> hours</div>
+                                    <div class="detail row2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <% if (flights.length > 1) { %>
+                    <h1>Return flight:</h1>
+                    <div class="form-group">
+                        <select name="returnFlightClass">
+                            <option value="economy"><div>Economy Class : $0</div></option>
+                            <option value="business"><span>Business Class: $100</span></option>
+                            <option value="first"><span>First Class: $300</span></option>
                         </select>
-                        <button type="submit">Submit</button>
-                    </form>
+                    </div>
+                    <div class="return-flight">
+                        <% flights[1].forEach(flight => { %>
+                            <div class="flight-details-container">
+                                <div class="flight-details">
+                                    <div class="flight-details-row">
+                                        <div class="detail row1"><%= flight.departureCity %></div>
+                                        <div class="detail row1">>>>>>>>>>>></div>
+                                        <div class="detail row1"><%= flight.destinationCity %></div>
+                                        <div class="detail row1"><%= flight.flightNo ? flight.flightNo : "Flight Number N/A" %></div>
+                                        <div class="detail row1 buttonCell">
+                                            <input type="radio" class="selectButtons" name="returnFlightNo" value="<%= flight.flightNo %>" required> <%= flight.price %> AUD
+                                        </div>
+                                    </div>
+                                    <div class="flight-details-row">
+                                        <div class="detail row2"><%= flight.departureDate %></div>
+                                        <div class="detail row2"></div>
+                                        <div class="detail row2"><%= flight.arrivalDate %></div>
+                                        <div class="detail row2"><%= flight.duration %> hours</div>
+                                        <div class="detail row2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
                 <% } %>
+                <div id="total-price-container">
+                    <h2>Total Price: <span id="total-price">0</span> AUD</h2>
+                    <input type="hidden" name="totalFlightPrice" id="totalFlightPrice" value="0">
+                </div>
+                <button type="submit" class="btn" id="submitBtn">Submit</button>
+            </form>
+        <% } %>
         </div>
     </div>
-</body>
-</html>
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function() { 
+    function extractPrice(text) {
+        const priceText = text.replace(/[^\d.]/g, ''); // Remove non-numeric characters except decimal point
+        return parseFloat(priceText) || 0; // Return the price as a float, or 0 if parsing fails
+    }
+
+    function calculateTotalPrice() {
+        let totalPrice = 0;
+
+        // Get selected departure flight price
+        const selectedDepartureFlight = $('input[name="departureFlightNo"]:checked');
+        if (selectedDepartureFlight.length > 0) {
+            const departurePriceText = selectedDepartureFlight.closest('.buttonCell').text();
+            totalPrice += extractPrice(departurePriceText);
+        }
+
+        // Get selected return flight price
+        const selectedReturnFlight = $('input[name="returnFlightNo"]:checked');
+        if (selectedReturnFlight.length > 0) {
+            const returnPriceText = selectedReturnFlight.closest('.buttonCell').text();
+            totalPrice += extractPrice(returnPriceText);
+        }
+
+        // Get selected flight class price for departure
+        const departureClass = $('select[name="departureFlightClass"]').val();
+        if (departureClass === 'business') totalPrice += 100;
+        if (departureClass === 'first') totalPrice += 300;
+
+        // Get selected flight class price for return
+        const returnClass = $('select[name="returnFlightClass"]').val();
+        if (returnClass === 'business') totalPrice += 100;
+        if (returnClass === 'first') totalPrice += 300;
+
+        $('#total-price').text(totalPrice);
+        $('#totalFlightPrice').val(totalPrice); // Update the hidden input field
+    }
+
+    $('input.selectButtons').change(function() {
+        var container = $(this).closest('.flight-details-container');
+        var isDepartureFlight = $(this).attr('name') === 'departureFlightNo';
+
+        if (isDepartureFlight) {
+            // For departure flight
+            $('.departure-flight .flight-details-container').removeClass('selected');
+            container.addClass('selected');
+        } else {
+            // For return flight
+            $('.return-flight .flight-details-container').removeClass('selected');
+            container.addClass('selected');
+        }
+
+        calculateTotalPrice();
+    });
+
+    $('select[name="departureFlightClass"], select[name="returnFlightClass"]').change(function() {
+        calculateTotalPrice();
+    });
+
+    $('form').submit(function(event) {
+        // Check if departure flight is selected
+        if (!$('input[name="departureFlightNo"]:checked').val()) {
+            alert('Please select a departure flight.');
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+
+        // Check if return flight is selected when there are return flights available
+        if ($('.return-flight').length && !$('input[name="returnFlightNo"]:checked').val()) {
+            alert('Please select a return flight.');
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+
+    calculateTotalPrice(); // Initial calculation
+});
+</script>
+    <%- include('footer'); %>

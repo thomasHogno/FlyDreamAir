@@ -26,10 +26,15 @@ insurance: {
     type: Boolean,
     default: false,
 },
-totalFee: {
-    type: Number,
-    default: 0
-}},
+flightClass:{
+    type: String,
+    default: "economy"
+},
+food:{
+    type: String,
+    default: "none",
+}
+},
 {
     timestamps: true,
 }

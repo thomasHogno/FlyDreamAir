@@ -1,6 +1,4 @@
 <%- include('header'); %>
-
-    <h1>Choose your Flight Services:</h1>
     <style>
         body {
           width: 100%;
@@ -105,7 +103,7 @@
           background: rgb(28, 185, 120);
           outline: none;
         }
-        .all-seats {
+        .all-return-seats {
           display: grid;
           grid-template-columns: repeat(9, 1fr);
           grid-gap: 15px;
@@ -114,7 +112,16 @@
           margin-top: 60px; 
           position: relative;
         }
-        .seat {
+        .all-departure-seats {
+          display: grid;
+          grid-template-columns: repeat(9, 1fr);
+          grid-gap: 15px;
+          margin: 60px 0;
+          /* margin-top: 20px; */
+          margin-top: 60px; 
+          position: relative;
+        }
+        .departureSeat {
           width: 20px;
           height: 20px;
           background: white;
@@ -122,11 +129,27 @@
           outline: 0.3mm solid rgb(180, 180, 180);
           cursor: pointer;
         }
-        .all-seats input:checked + label {
+        .returnSeat {
+          width: 20px;
+          height: 20px;
+          background: white;
+          border-radius: 0.5mm;
+          outline: 0.3mm solid rgb(180, 180, 180);
+          cursor: pointer;
+        }
+        .all-departure-seats input:checked + label {
           background: rgb(28, 185, 120);
           outline: none;
         }
-        .seat.booked {
+        .all-return-seats input:checked + label {
+          background: rgb(28, 185, 120);
+          outline: none;
+        }
+        .departureSeat.booked {
+          background: rgb(180, 180, 180);
+          outline: none;
+        }
+        .returnSeat.booked {
           background: rgb(180, 180, 180);
           outline: none;
         }
@@ -251,16 +274,8 @@
     margin-top: 20px;
 }
 
-.services-options label {
-    display: block;
-    margin-bottom: 10px;
-}
 
-.services-options input[type="checkbox"] {
-    display: none;
-}
 
-/* Custom checkbox style */
 .services-options input[type="checkbox"] + label:before {
     content: "";
     display: inline-block;
@@ -272,213 +287,344 @@
     margin-right: 10px;
     vertical-align: middle;
 }
-
 /* Checkbox checked style */
 .services-options input[type="checkbox"]:checked + label:before {
     background-color: #4caf50;
     border-color: #4caf50;
 }
 
-/* Checkbox label text */
-.services-options label {
-    font-size: 16px;
-    cursor: pointer;
-}
-
-/* Hide checkbox input, but keep label clickable */
-.services-options input[type="checkbox"] {
-    display: none;
-}
-.selected-option {
-    border: 2px solid black;
-    background-color: #4caf50;
-}
-
+.price {
+      position: sticky;
+      top: 0;
+      background-color: green;
+      border: 2px solid #4CAF50;
+      padding: 10px;
+      z-index: 1000; /* Ensure it stays on top of other content */
+    }
       </style>
     </head>
     <body>
-        <form method="post" action="/chooseServices">
-      <div class="center">
-        <div class="tickets">
-          <div class="ticket-selector">
-            <div class="head">
-              <div class="title">Seat Map</div>
+      <h1>Choose your Flight Services:</h1>
+      <div class="price">
+        <div class="total">
+        <h3 class="totalServiceFee">Total Service Fee (AUD) : <div class="amount">0</div></h3> 
+        </div>
+        </div>
+      <form method="post" action="/chooseServices">
+
+          <input type="text" id="totalFee" class="totalFee" name="totalFee" value="0" readonly> 
+
+        <h1>Choose Departure Flight Services: </h1>
+    <div class="center">
+      <div class="tickets">
+        <div class="ticket-selector">
+          <div class="head">
+            <div class="title">Seat Map</div>
+          </div>
+          <div class="seats">
+            <div class="status">
+              <div class="item">Available</div>
+              <div class="item">Booked</div>
+              <div class="item">Selected</div>
             </div>
-            <div class="seats">
-              <div class="status">
-                <div class="item">Available</div>
-                <div class="item">Booked</div>
-                <div class="item">Selected</div>
+            <div class="all-departure-seats">
+              <input type="checkbox" name="departureSeat" id="s1" />
+              <label for="ds1" class="seat booked"></label>
+            </div>
+          </div>
+          <h3>Booked Seat: <span class="departure-booked-seat"></span></h3>
+
+          <div class="baggage-options">
+              <h2>Baggage Options:</h2>
+              <input type="radio" name="departureBaggage" id="departure-baggage-none" value="0" checked>
+              <label for="departure-baggage-none">
+                  <img class="baggage-img" src="/icons/baggage.png">
+                  No baggage</label><br>
+              <input type="radio" name="departureBaggage" id="departure-baggage-15kg" value="15">
+              <label for="departure-baggage-15kg">
+                  <img class="baggage-img" src="/icons/baggage.png">
+                  15kg : $15</label><br>
+              <input type="radio" name="departureBaggage" id="departure-baggage-25kg" value="25">
+              <label for="departure-baggage-25kg">
+                  <img class="baggage-img" src="/icons/baggage.png">
+                  25kg : $25</label><br>
+          </div>
+
+          <div class="food-options">
+              <h2>Food & Drink :</h2>
+              <input type="radio" name="departureFood" id="departure-food-none" value="0" checked>
+              <label for="departure-food-none">
+                  <img class="baggage-img" src="/icons/noneFood.jpg">
+                  No food</label><br>
+              <input type="radio" name="departureFood" id="departure-food-rice" value="10">
+              <label for="departure-food-rice">
+                  <img class="baggage-img" src="/icons/chicken-rice.jpg">
+                  Chiken rice + free drink</label><br>
+              <input type="radio" name="departureFood" id="departure-food-noodle" value="15">
+              <label for="departure-food-noodle">
+                  <img class="baggage-img" src="/icons/noodle.jpg">
+                  Singapore Noodle + free drink</label><br>
+          </div>
+
+          <div class="services-options">
+              <h2>Additional Services:</h2>
+              <div> 
+                  <h4>Priority Check-in:</h4> 
+              <input type="checkbox" name="departurePriority" id="departure-priority-checkin-true" value="true">
+                  <label for="departure-priority-checkin-true">  Priority Check-in : $50</label>
+                  <input type="checkbox" name="departurePriority" id="departure-priority-checkin-false" value="false" checked style="display: none;">
               </div>
-              <div class="all-seats">
-                <input type="checkbox" name="seat" id="s1" />
-                <label for="s1" class="seat booked"></label>
+                  <br/>
+              <div>
+                  <h4>Insurance: </h4>
+                  <input type="checkbox" name="departureInsurance" id="departure-insurance-true" value="true">
+                  <label for="departure-insurance-true">Insurance : $100</label>
+                  <input type="checkbox" name="departureInsurance" id="departure-insurance-false" value="false" checked style="display: none;">
               </div>
-            </div>
-            <h3>Booked Seat: <span class="booked-seat"></span></h3>
-
-            <div class="baggage-options">
-                <h2>Baggage Options:</h2>
-                <input type="radio" name="baggage" id="baggage-none" value="0" checked>
-                <label for="baggage-none">
-                    <img class="baggage-img" src="/icons/baggage.png">
-                    No baggage</label><br>
-                <input type="radio" name="baggage" id="baggage-15kg" value="15">
-                <label for="baggage-15kg">
-                    <img class="baggage-img" src="/icons/baggage.png">
-                    15kg : $15</label><br>
-                <input type="radio" name="baggage" id="baggage-25kg" value="25">
-                <label for="baggage-25kg">
-                    <img class="baggage-img" src="/icons/baggage.png">
-                    25kg : $25</label><br>
-            </div>
-
-            <div class="services-options">
-                <h2>Additional Services:</h2>
-                <div> 
-                    <h4>Priority Check-in:</h4> 
-                <input type="checkbox" name="priority" id="priority-checkin-true" value="true">
-                    <label for="priority-checkin-true">  Priority Check-in : $50</label>
-                    <input type="checkbox" name="priority" id="priority-checkin-false" value="false" checked style="display: none;">
-                    <!-- <label for="priority-checkin-false">No need priority check-in </label> -->
-                </div>
-                    <br/>
-                <div>
-                    <h4>Insurance: </h4>
-                    <input type="checkbox" name="insurance" id="insurance-true" value="true">
-                    <label for="insurance-true">Insurance : $100</label>
-                    <input type="checkbox" name="insurance" id="insurance-false" value="false" checked style="display: none;">
-                    <!-- <label for="insurance-false">
-                     No need insurance</label> -->
-                </div>
-            </div>
-
-          <div class="price">
-            <div class="total">
-            <h3>Total Service Fee (AUD) : <div class="amount">0</div></h3> 
-            <input type="text" id="totalFee" class="totalFee" name="totalFee" value="0" readonly> 
-            </div>
-            </div>
-            <button type="submit">Next</button>
           </div>
         </div>
       </div>
-    </form>
-    <script>
-        let seats = document.querySelector(".all-seats");
-       let selectedTicket = null; // Variable to store the currently selected ticket
-       let bookedSeatDisplay = document.querySelector(".booked-seat");
-       let selectedBaggageOption = null; // Variable to store the currently selected baggage option
-       let selectedPriorityCheckin = null; // Variable to store the currently selected priority check-in option
-       let selectedInsurance = null; // Variable to store the currently selected insurance option
-       
-       let previousSeatCost = 0;
-       let previousBaggageCost = 0;
-       let previousPriorityCheckinCost = 0;
-       let previousInsuranceCost = 0;
-       
-       // Generate seat checkboxes dynamically
-       for (var i = 0; i < 152; i++) {
-           let randint = Math.floor(Math.random() * 2);
-           let booked = randint === 1 ? "booked" : "";
-           seats.insertAdjacentHTML(
-               "beforeend",
-               '<input type="checkbox" name="seat" id="s' +
-                   (i + 2) +'" value ="'+(i+2)+'"/><label for="s' +
-                   (i + 2) +
-                   '" class="seat ' +
-                   booked +
-                   '"></label>'
-           );
-       }
-       
-       let tickets = seats.querySelectorAll("input[name='seat']");
-       tickets.forEach((ticket) => {
-           ticket.addEventListener("change", () => {
-               let amount = Number(document.querySelector(".amount").textContent);
-               amount -= previousSeatCost; // Subtract previous seat cost
-               previousSeatCost = ticket.checked ? 200 : 0;
-               if (ticket.checked) {
-                   // Uncheck the previously selected ticket, if any
-                   if (selectedTicket && selectedTicket !== ticket) {
-                       selectedTicket.checked = false;
-                   }
-                   selectedTicket = ticket;
-                   bookedSeatDisplay.textContent = ticket.id.substring(1); // Display the seat number
-               } else {
-                   bookedSeatDisplay.textContent = ""; // Clear booked seat display if ticket is unchecked
-               }
-               amount += previousSeatCost;
-               document.querySelector(".amount").textContent = amount; // Update the amount display
-               document.querySelector(".totalFee").value = amount; // Update the amount display
-           });
-       });
-       
-       let baggageOptions = document.querySelectorAll("input[name='baggage']");
-       baggageOptions.forEach((option) => {
-           option.addEventListener("change", () => {
-               let amount = Number(document.querySelector(".amount").textContent);
-               amount -= previousBaggageCost; // Subtract previous baggage cost
-               previousBaggageCost = option.checked ? Number(option.value) : 0;
-               if (option.checked) {
-                   // Uncheck the previously selected baggage option, if any
-                   if (selectedBaggageOption && selectedBaggageOption !== option) {
-                       selectedBaggageOption.parentNode.classList.remove("selected-option");
-                   }
-                   selectedBaggageOption = option;
-                   selectedBaggageOption.parentNode.classList.add("selected-option");
-               } else {
-                   selectedBaggageOption.parentNode.classList.remove("selected-option");
-               }
-               amount += previousBaggageCost;
-               document.querySelector(".amount").textContent = amount;
-               document.querySelector(".totalFee").value = amount; // Update the amount display
+    </div>
+<% if(isReturnFlight){ %>
+  <h1>Choose Return Flight Services: </h1>
+  <div class="center">
+    <div class="tickets">
+      <div class="ticket-selector">
+        <div class="head">
+          <div class="title">Seat Map</div>
+        </div>
+        <div class="seats">
+          <div class="status">
+            <div class="item">Available</div>
+            <div class="item">Booked</div>
+            <div class="item">Selected</div>
+          </div>
+          <div class="all-return-seats">
+            <input type="checkbox" name="returnSeat" id="rs1" />
+            <label for="rs1" class="seat booked"></label>
+          </div>
+        </div>
+        <h3>Booked Seat: <span class="booked-return-seat"></span></h3>
 
-              });
-       });
-       
-       // Add event listener for priority check-in
-       let priorityCheckinCheckbox = document.getElementById("priority-checkin-true");
-       priorityCheckinCheckbox.addEventListener("change", () => {
-           let amount = Number(document.querySelector(".amount").textContent);
-           amount -= previousPriorityCheckinCost; // Subtract previous priority check-in cost
-           previousPriorityCheckinCost = priorityCheckinCheckbox.checked ? 50 : 0;
-           if (priorityCheckinCheckbox.checked) {
-                document.getElementById('priority-checkin-false').checked = false;
-               // Uncheck the previously selected priority check-in option, if any
-               if (selectedPriorityCheckin && selectedPriorityCheckin !== priorityCheckinCheckbox) {
-                   selectedPriorityCheckin.checked = false;
-               }
-               selectedPriorityCheckin = priorityCheckinCheckbox;
-           } else{
-            document.getElementById('priority-checkin-false').checked = true;
-           }
-           amount += previousPriorityCheckinCost;
-           document.querySelector(".amount").textContent = amount;
-           document.querySelector(".totalFee").value = amount; // Update the amount display
+        <div class="baggage-options">
+          <h2>Baggage Options:</h2>
+          <input type="radio" name="returnBaggage" id="return-baggage-none" value="0" checked>
+          <label for="return-baggage-none">
+              <img class="baggage-img" src="/icons/baggage.png">
+              No baggage</label><br>
+          <input type="radio" name="returnBaggage" id="return-baggage-15kg" value="15">
+          <label for="return-baggage-15kg">
+              <img class="baggage-img" src="/icons/baggage.png">
+              15kg : $15</label><br>
+          <input type="radio" name="returnBaggage" id="return-baggage-25kg" value="25">
+          <label for="return-baggage-25kg">
+              <img class="baggage-img" src="/icons/baggage.png">
+              25kg : $25</label><br>
+      </div>
 
+      
+      <div class="food-options">
+        <h2>Food & Drink :</h2>
+        <input type="radio" name="returnFood" id="return-food-none" value="0" checked>
+        <label for="return-food-none">
+            <img class="baggage-img" src="/icons/noneFood.jpg">
+            No food</label><br>
+        <input type="radio" name="returnFood" id="return-food-rice" value="10">
+        <label for="return-food-rice">
+            <img class="baggage-img" src="/icons/chicken-rice.jpg">
+            Chiken rice + free drink</label><br>
+        <input type="radio" name="returnFood" id="return-food-noodle" value="15">
+        <label for="return-food-noodle">
+            <img class="baggage-img" src="/icons/noodle.jpg">
+            Singapore Noodle + free drink</label><br>
+    </div>
+
+        <div class="services-options">
+            <h2>Additional Services:</h2>
+            <div> 
+                <h4>Priority Check-in:</h4> 
+            <input type="checkbox" name="returnPriority" id="return-priority-checkin-true" value="true">
+                <label for="return-priority-checkin-true">  Priority Check-in : $50</label>
+                <input type="checkbox" name="returnPriority" id="return-priority-checkin-false" value="false" checked style="display: none;">
+            </div>
+                <br/>
+            <div>
+                <h4>Insurance: </h4>
+                <input type="checkbox" name="returnInsurance" id="return-insurance-true" value="true">
+                <label for="return-insurance-true">Insurance : $100</label>
+                <input type="checkbox" name="returnInsurance" id="return-insurance-false" value="false" checked style="display: none;">
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <% } %>
+      <button type="submit">Next</button>
+  </form>
+  <script>
+ document.addEventListener("DOMContentLoaded", () => {
+    let departureSeats = document.querySelector(".all-departure-seats");
+    let bookedDepartureSeatDisplay = document.querySelector(".departure-booked-seat");
+    let selectedDepartureTicket = null;
+    let selectedDepartureBaggageOption = null;
+    let selectedDepartureFoodOption = null;
+    let selectedDeparturePriorityCheckin = null;
+    let selectedDepartureInsurance = null;
+
+    let previousDepartureSeatCost = 0;
+    let previousDepartureBaggageCost = 0;
+    let previousDepartureFoodCost = 0;
+    let previousDeparturePriorityCheckinCost = 0;
+    let previousDepartureInsuranceCost = 0;
+
+    let returnSeats = document.querySelector(".all-return-seats");
+    let bookedReturnSeatDisplay = document.querySelector(".booked-return-seat");
+    let selectedReturnTicket = null;
+    let selectedReturnBaggageOption = null;
+    let selectedReturnFoodOption = null;
+    let selectedReturnPriorityCheckin = null;
+    let selectedReturnInsurance = null;
+
+    let previousReturnSeatCost = 0;
+    let previousReturnBaggageCost = 0;
+    let previousReturnFoodCost = 0;
+    let previousReturnPriorityCheckinCost = 0;
+    let previousReturnInsuranceCost = 0;
+
+    const updateTotalAmount = () => {
+        let amount = 0;
+        amount += previousDepartureSeatCost;
+        amount += previousDepartureBaggageCost;
+        amount += previousDepartureFoodCost;
+        amount += previousDeparturePriorityCheckinCost;
+        amount += previousDepartureInsuranceCost;
+        amount += previousReturnSeatCost;
+        amount += previousReturnBaggageCost;
+        amount += previousReturnFoodCost;
+        amount += previousReturnPriorityCheckinCost;
+        amount += previousReturnInsuranceCost;
+        document.querySelector(".amount").textContent = amount;
+        document.querySelector(".totalFee").value = amount;
+    };
+
+    // Generate seat checkboxes dynamically
+    for (let i = 0; i < 152; i++) {
+        let randint = Math.floor(Math.random() * 2);
+        let booked = randint === 1 ? "booked" : "";
+        departureSeats.insertAdjacentHTML(
+            "beforeend",
+            `<input type="checkbox" name="departureSeat" id="ds${i + 2}" value="${i + 2}" /><label for="ds${i + 2}" class="departureSeat ${booked}"></label>`
+        );
+    }
+
+    let departureTickets = departureSeats.querySelectorAll("input[name='departureSeat']");
+    departureTickets.forEach((ticket) => {
+        ticket.addEventListener("change", () => {
+            previousDepartureSeatCost = ticket.checked ? 200 : 0;
+            if (ticket.checked) {
+                if (selectedDepartureTicket && selectedDepartureTicket !== ticket) {
+                    selectedDepartureTicket.checked = false;
+                }
+                selectedDepartureTicket = ticket;
+                bookedDepartureSeatDisplay.textContent = ticket.id.substring(2);
+            } else {
+                bookedDepartureSeatDisplay.textContent = "";
+            }
+            updateTotalAmount();
         });
-       
-       // Add event listener for insurance
-       let insuranceCheckbox = document.getElementById("insurance-true");
-       insuranceCheckbox.addEventListener("change", () => {
-           let amount = Number(document.querySelector(".amount").textContent);
-           amount -= previousInsuranceCost; // Subtract previous insurance cost
-           previousInsuranceCost = insuranceCheckbox.checked ? 100 : 0;
-           if (insuranceCheckbox.checked) {
-                document.getElementById('insurance-false').checked = false;
-               // Uncheck the previously selected insurance option, if any
-               if (selectedInsurance && selectedInsurance !== insuranceCheckbox) {
-                   selectedInsurance.checked = false;
-               }
-               selectedInsurance = insuranceCheckbox;
-           } else{
-            document.getElementById('insurance-false').checked = false;
-           }
-           amount += previousInsuranceCost;
-           document.querySelector(".amount").textContent = amount;
-           document.querySelector(".totalFee").value = amount; // Update the amount display
+    });
 
+    let departureBaggageOptions = document.querySelectorAll("input[name='departureBaggage']");
+    departureBaggageOptions.forEach((option) => {
+        option.addEventListener("change", () => {
+            previousDepartureBaggageCost = option.checked ? Number(option.value) : 0;
+            selectedDepartureBaggageOption = option.checked ? option : null;
+            updateTotalAmount();
         });
-             </script>
+    });
+
+    let departureFoodOptions = document.querySelectorAll("input[name='departureFood']");
+    departureFoodOptions.forEach((option) => {
+        option.addEventListener("change", () => {
+            previousDepartureFoodCost = option.checked ? Number(option.value) : 0;
+            selectedDepartureFoodOption = option.checked ? option : null;
+            updateTotalAmount();
+        });
+    });
+
+    let departurePriorityCheckinCheckbox = document.getElementById("departure-priority-checkin-true");
+    departurePriorityCheckinCheckbox.addEventListener("change", () => {
+        previousDeparturePriorityCheckinCost = departurePriorityCheckinCheckbox.checked ? 50 : 0;
+        document.getElementById('departure-priority-checkin-false').checked = !departurePriorityCheckinCheckbox.checked;
+        updateTotalAmount();
+    });
+
+    let departureInsuranceCheckbox = document.getElementById("departure-insurance-true");
+    departureInsuranceCheckbox.addEventListener("change", () => {
+        previousDepartureInsuranceCost = departureInsuranceCheckbox.checked ? 100 : 0;
+        document.getElementById('departure-insurance-false').checked = !departureInsuranceCheckbox.checked;
+        updateTotalAmount();
+    });
+
+    // Generate return seat checkboxes dynamically
+    for (let i = 0; i < 152; i++) {
+        let randint = Math.floor(Math.random() * 2);
+        let booked = randint === 1 ? "booked" : "";
+        returnSeats.insertAdjacentHTML(
+            "beforeend",
+            `<input type="checkbox" name="returnSeat" id="rs${i + 2}" value="${i + 2}" /><label for="rs${i + 2}" class="returnSeat ${booked}"></label>`
+        );
+    }
+
+    let returnTickets = returnSeats.querySelectorAll("input[name='returnSeat']");
+    returnTickets.forEach((ticket) => {
+        ticket.addEventListener("change", () => {
+            previousReturnSeatCost = ticket.checked ? 200 : 0;
+            if (ticket.checked) {
+                if (selectedReturnTicket && selectedReturnTicket !== ticket) {
+                    selectedReturnTicket.checked = false;
+                }
+                selectedReturnTicket = ticket;
+                bookedReturnSeatDisplay.textContent = ticket.id.substring(2);
+            } else {
+                bookedReturnSeatDisplay.textContent = "";
+            }
+            updateTotalAmount();
+        });
+    });
+
+    let returnBaggageOptions = document.querySelectorAll("input[name='returnBaggage']");
+    returnBaggageOptions.forEach((option) => {
+        option.addEventListener("change", () => {
+            previousReturnBaggageCost = option.checked ? Number(option.value) : 0;
+            selectedReturnBaggageOption = option.checked ? option : null;
+            updateTotalAmount();
+        });
+    });
+
+    let returnFoodOptions = document.querySelectorAll("input[name='returnFood']");
+    returnFoodOptions.forEach((option) => {
+        option.addEventListener("change", () => {
+            previousReturnFoodCost = option.checked ? Number(option.value) : 0;
+            selectedReturnFoodOption = option.checked ? option : null;
+            updateTotalAmount();
+        });
+    });
+
+    let returnPriorityCheckinCheckbox = document.getElementById("return-priority-checkin-true");
+    returnPriorityCheckinCheckbox.addEventListener("change", () => {
+        previousReturnPriorityCheckinCost = returnPriorityCheckinCheckbox.checked ? 50 : 0;
+        document.getElementById('return-priority-checkin-false').checked = !returnPriorityCheckinCheckbox.checked;
+        updateTotalAmount();
+    });
+
+    let returnInsuranceCheckbox = document.getElementById("return-insurance-true");
+    returnInsuranceCheckbox.addEventListener("change", () => {
+        previousReturnInsuranceCost = returnInsuranceCheckbox.checked ? 100 : 0;
+        document.getElementById('return-insurance-false').checked = !returnInsuranceCheckbox.checked;
+        updateTotalAmount();
+    });
+});
+
+           </script>
            <%- include('footer'); %>
