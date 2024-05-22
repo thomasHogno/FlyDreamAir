@@ -1,3 +1,10 @@
+// here
+
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
+// here
+
 const mongoose = require("mongoose"); 
 // const jwt = require("jsonwebtoken");
 // const multer = require("multer");
@@ -14,6 +21,21 @@ const Flight = require("./models/flight.js");
 const { title } = require("process");
 const Service = require("./models/service.js");
 
+// here
+const bcrypt = require('bcrypt')
+const passport = require('passport')
+const methodOverride = require('method-override')
+
+const initializePassport = require('./templates/passport-config.js');
+
+initializePassport(
+    passport, 
+    email => users.find(user => user.email === email),
+    id => users.find(user => user.id === id),
+)
+
+const users = []
+// here
 
 
 //register view engine
@@ -33,6 +55,13 @@ app.use(bodyParser.json());
 
 const username = "ddsgdfg";
 
+// here
+
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(methodOverride('_method'))
+//here
+
 mongoose
   .connect(
     "mongodb+srv://csit214:jVxpHaaTBrO7AhY6@flydreamdb.pgvinhz.mongodb.net/?retryWrites=true&w=majority&appName=FlyDreamDB"  )
@@ -51,22 +80,74 @@ app.get("/bookOnline",(req,res)=>{
 res.render('searchFlight', {title:"Search Flight"});
 });
 
-app.get('/login',(req,res)=>{
-    res.render('login',{title:"Login"})
+// here
+
+app.get('/', checkAuthenticated, (req, res) => {
+    res.render('index', { name: req.user.name, title:"Homepage"})
+})
+
+
+app.get('/index',(req,res)=>{
+    res.render("index",{title:"Homepage"})})
+
+
+
+app.get('/login', checkNotAuthenticated, (req, res) => {
+    res.render('login.ejs', {title:"Login"})
+})
+
+app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failureFlash: true
+
+}))
+
+app.get('/register', checkNotAuthenticated, (req, res) => {
+    res.render('register',{title:"register"})
+})
+
+
+
+app.post('/register', checkNotAuthenticated,  async (req, res) => {
+    try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        users.push({
+            id: Date.now().toString(),
+            name: req.body.name,
+            email: req.body.email,
+            password: hashedPassword
+        })
+        res.redirect('/login')
+    } catch {
+        res.redirect('/register')
+    }
+    console.log(users)
 })
 
 app.get('/logout',(req,res)=>{
     res.redirect(`/index?loggedIn=${loggedIn}`);
 })
 
+app.delete('/logout', (req, res, next) => {
+    req.logOut((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/login')
+    })
+})
+
+
+app.get("/bookOnline",(req,res)=>{
+res.render('searchFlight', {title:"Search Flight"});
+});
+
+
+
 app.get('/dashboard',(req,res)=>{
     res.render('dashboard',{title:"Dashboard","loggedIn":loggedIn})
 })
-
-app.get('/', (req, res) => {
-    res.redirect(`/index?loggedIn=${loggedIn}`);
-});
-
 
 app.get('/contactUs',(req,res)=>{
     res.render('contactUs',{title:"Contact Us",form_submitted: false, loggedIn: loggedIn})
@@ -95,8 +176,6 @@ app.get('/myFlightServices',(req,res)=>{
 app.post('/submit_inquiry',(req,res)=>{
     res.redirect('contactUs',{form_submitted: true})})
 
-app.get('/index',(req,res)=>{
-    res.render("index",{title:"Homepage"})})
 
 app.post('/searchFlight', async (req,res)=>{
     const inputFlight = req.body;
@@ -194,6 +273,7 @@ app.post('/chooseTicket', (req, res) => {
     }
 
         res.redirect('/fillPassengerInfor');
+
 });
 
 
@@ -303,3 +383,23 @@ app.post('/makePayment',(req,res)=>{
 function capitalize(string) {
     return string.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
+
+// here
+
+
+function checkAuthenticated(req, res , next) {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+
+    res.redirect('/login')
+}
+
+function checkNotAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/')
+    }
+    next()
+}
+
+// here
