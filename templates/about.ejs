@@ -1,0 +1,129 @@
+<%- include('header'); %>
+
+<div class="hero">
+    <h1>About Us</h1>
+    <p>Welcome to FlyDreamAir. Learn more about our company.</p>
+    <div class="slideshow-container">
+        <div class="aboutSlides fade">
+            <img src="/images/flight.webp" style="width:100%">
+            <div class="text">FlyDreamAir offers safe, luxurious and affordable air travel!</div>
+        </div>
+        <div class="aboutSlides fade">
+            <img src="/images/damnboy.jpg" style="width:100%">
+            <div class="text">Our friendly staff caters to your every need!</div>
+        </div>
+        <div class="aboutSlides fade">
+            <img src="/images/pilot.jpg" style="width:100%">
+            <div class="text">And our pilots are highly trained!</div>
+        </div>
+        <div class="aboutSlides fade">
+            <img src="/images/comeflyy.jpg" style="width:100%">
+            <div class="text">Come fly with Fly Dream Air!</div>
+        </div>
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        
+    </div>
+</div>
+
+<div class="about-section">
+    <h2>Our Story</h2>
+    <img src="/images/CEO.jpg" style="width:25%">
+    <p>FlyDreamAir was founded in 1950 after WW2, by Jeremy Fitzgerald-DreamAir who after a long service in the war, decided to create his own airline company.</p>
+    <img src="/images/airplaneold.jpg" style="width:25%">
+    <p>FlyDreamAir's first airplane, piloted by Jeremy Fitzgerald-DreamAir himself.</p>
+    <img src="/icons/logo.png" style="width:25%">
+    <p>FlyDreamAir is now one of the largest airlines in the world!</p>
+    <p>A message from our CEO.</p>
+    <a href="https://www.youtube.com/channel/UC9EBhhtoMTXeZnD5TLP_kNw" class="message-btn">Message</a>
+</div>
+
+<%- include('footer'); %>
+
+<style>
+    .hero {
+        text-align: center;
+        background-color: #f2f2f2;
+        padding: -10px 0;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+    }
+
+    .hero p {
+        font-size: 18px;
+        color: #555;
+        margin-bottom: 40px;
+    }
+
+    .slideshow-container {
+        position: relative;
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    .aboutSlides {
+        display: none;
+    }
+    
+    .message-btn {
+        text-decoration: none;
+        border: 5px solid #333;
+        background-color: #333;
+        color: white;
+        border-radius: 3px;
+}
+    .prev, .next {
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        width: auto;
+        padding: 16px;
+        margin-top: -22px;
+        color: white;
+        font-weight: bold;
+        font-size: 20px;
+        transition: 0.6s ease;
+        border-radius: 0 3px 3px 0;
+        user-select: none;
+    }
+
+    .next {
+        right: 0;
+        border-radius: 3px 0 0 3px;
+    }
+
+    .prev:hover, .next:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .text {
+        color: #fff;
+        font-size: 20px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.5);
+        width: 98%;
+        text-align: center;
+    }
+
+    .about-section {
+        text-align: center;
+        padding: 50px 20px;
+        background-color: #fff;
+    }
+
+    .about-section h2 {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .about-section p {
+        font-size: 18px;
+        color: #555;
+    }
+</style>

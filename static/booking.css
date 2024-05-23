@@ -1,0 +1,123 @@
+:root{
+    --primaryColor: #333;
+    --primaryColorDark: #334c99;
+    --textDark: #0f172a;
+    --textLight: #64748b;
+    --extraLight: #f1f5f9;
+    --maxWidth: 1200px;
+
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: Arial, sans-serif; 
+}
+
+
+.flight-heading-container {
+    width: 100%;
+    margin: 30px auto; 
+    align-items: center;
+}
+
+#flight-heading {
+    font-weight: 500;
+    font-size: 30px;
+    margin: 30px;
+    margin-right: 40px;
+}
+
+.flight-details-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.flight-details-container.selected .flight-details{
+    background-color: rgb(236, 236, 236); 
+}
+
+.flight-details{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--primaryColor);
+    width: 70%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.flight-details-row{
+    display: flex;
+    margin-left: 10px;
+    padding: 5px;
+}
+
+.detail{
+    flex: 1;
+    text-align: center;
+}
+
+.row1{
+    color: var(--textDark);
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.row2{
+    color: var(--textLight);
+    font-size: 15px;
+}
+
+.btn{
+    padding: .75rem 2rem;
+    outline: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
+    background-color: var(--primaryColor);
+    border-radius: .2rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#submitBtn{
+    margin: 40px auto; 
+    font-size: 18px;
+    margin-right: 15%;
+    display: flex;
+    justify-content: right; 
+    align-items: center;
+}
+
+.flight-heading{
+    /* width: 30%; */
+    border: 1px solid var(--primaryColor);
+    background-color: rgb(242, 246, 250);
+    padding-bottom: 20px;
+    margin-top: 20px;
+}
+
+.flight-heading h1{
+    padding: 10px 25px;
+    font-size: 20px;
+    border-bottom: 1px solid var(--primaryColor);
+    font-weight: 500;
+    text-align: center;
+    background-color: var(--primaryColor);
+    color: white;
+    margin-bottom: 10px;
+}
+
+.flight-heading p{
+    font-weight: 400;
+    font-size: 18px;
+    padding: 10px 25px;
+}

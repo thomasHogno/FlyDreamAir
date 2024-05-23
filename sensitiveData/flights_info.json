@@ -1,0 +1,300 @@
+{
+    "flights": [
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Singapore",
+            "departureTime": "12:30 PM",
+            "flightNo": "SG101",
+            "duration": 8.5,
+            "price": 897
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Singapore",
+            "departureTime": "03:00 PM",
+            "flightNo": "SG102",
+            "duration": 8,
+            "price": 950
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Singapore",
+            "departureTime": "06:15 PM",
+            "flightNo": "SG103",
+            "duration": 8.5,
+            "price": 920
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Singapore",
+            "departureTime": "08:00 PM",
+            "flightNo": "SG104",
+            "duration": 8,
+            "price": 910
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity":"Los Angeles",
+            "departureTime": "09:45 AM",
+            "flightNo": "LA101",
+            "duration": 12.5,
+            "price": 1.899
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Los Angeles",
+            "departureTime": "01:30 PM",
+            "flightNo": "LA102",
+            "duration": 13,
+            "price": 2000
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Los Angeles",
+            "departureTime": "04:00 PM",
+            "flightNo": "LA103",
+            "duration": 12,
+            "price": 2100
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Ho Chi Minh",
+            "departureTime": "08:15 AM",
+            "flightNo": "HCM101",
+            "duration": 9.5,
+            "price": 500
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Ho Chi Minh",
+            "departureTime": "11:30 AM",
+            "flightNo": "HCM102",
+            "duration": 9,
+            "price": 599
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Ho Chi Minh",
+            "departureTime": "02:45 PM",
+            "flightNo": "HCM103",
+            "duration": 9.5,
+            "price": 600
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Hanoi",
+            "departureTime": "10:00 AM",
+            "flightNo": "HAN101",
+            "duration": 10.5,
+            "price": 950
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Hanoi",
+            "departureTime": "02:30 PM",
+            "flightNo": "HAN102",
+            "duration": 11,
+            "price": 990
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Hanoi",
+            "departureTime": "06:45 PM",
+            "flightNo": "HAN103",
+            "duration": 10,
+            "price": 970
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Honolulu",
+            "departureTime": "11:15 AM",
+            "flightNo": "HNL101",
+            "duration": 10,
+            "price": 1800
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Honolulu",
+            "departureTime": "03:30 PM",
+            "flightNo": "HNL102",
+            "duration": 11,
+            "price": 1900
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Melbourne",
+            "departureTime": "08:00 AM",
+            "flightNo": "MEL101",
+            "duration": 2,
+            "price": 150
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Melbourne",
+            "departureTime": "10:30 AM",
+            "flightNo": "MEL102",
+            "duration": 2,
+            "price": 160
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Melbourne",
+            "departureTime": "01:00 PM",
+            "flightNo": "MEL103",
+            "duration": 2,
+            "price": 170
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Melbourne",
+            "departureTime": "03:30 PM",
+            "flightNo": "MEL104",
+            "duration": 2,
+            "price": 180
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Melbourne",
+            "departureTime": "06:00 PM",
+            "flightNo": "MEL105",
+            "duration": 2,
+            "price": 190
+        },
+        {
+            "departureCity": "Sydney",
+            "destinationCity": "Brisbane",
+            "departureTime": "09:00 AM",
+            "flightNo": "BNE101",
+            "duration": 1.5,
+            "price": 120
+        },
+        {
+            "departureCity": "Brisbane",
+            "destinationCity": "Sydney",
+            "departureTime": "09:00 AM",
+            "flightNo": "BNE103",
+            "duration": 1.5,
+            "price": 120
+        },
+        {
+            "departureCity": "Brisbane",
+            "destinationCity": "Sydney",
+            "departureTime": "02:30 PM",
+            "flightNo": "BNE102",
+            "duration": 1.5,
+            "price": 130
+        },
+        {
+            "departureCity": "Singapore",
+            "destinationCity": "Sydney",
+            "departureTime": "09:30 PM",
+            "flightNo": "SG201",
+            "duration": 8.5,
+            "price": 789
+        },
+        {
+            "departureCity": "Singapore",
+            "destinationCity": "Sydney",
+            "departureTime": "01:00 PM",
+            "flightNo": "SG202",
+            "duration": 8,
+            "price": 978
+        },
+        {
+            "departureCity": "Singapore",
+            "destinationCity": "Sydney",
+            "departureTime": "08:55 PM",
+            "flightNo": "SG203",
+            "duration": 8.5,
+            "price": 966
+        },
+        {
+            "departureCity": "Los Angeles",
+            "destinationCity":"Sydney",
+            "departureTime": "15:45 PM",
+            "flightNo": "LA201",
+            "duration": 12.5,
+            "price": 1799
+        },
+        {
+            "departureCity": "Los Angeles",
+            "destinationCity": "Sydney",
+            "departureTime": "07:30 AM",
+            "flightNo": "LA202",
+            "duration": 14,
+            "price": 2299
+        },
+        {
+            "departureCity": "Ho Chi Minh",
+            "destinationCity": "Sydney",
+            "departureTime": "09:40 AM",
+            "flightNo": "HCM201",
+            "duration": 8.75,
+            "price": 355
+        },
+        {
+            "departureCity": "Ho Chi Minh",
+            "destinationCity": "Sydney",
+            "departureTime": "11:30 PM",
+            "flightNo": "HCM202",
+            "duration": 9,
+            "price": 299
+        },
+        {
+            "departureCity": "Hanoi",
+            "destinationCity": "Sydney",
+            "departureTime": "10:00 PM",
+            "flightNo": "HAN201",
+            "duration": 19.5,
+            "price": 950
+        },
+        {
+            "departureCity": "Hanoi",
+            "destinationCity": "Sydney",
+            "departureTime": "07:30 PM",
+            "flightNo": "HAN202",
+            "duration": 18,
+            "price": 990
+        },
+        {
+            "departureCity": "Honolulu",
+            "destinationCity": "Sydney",
+            "departureTime": "11:35 AM",
+            "flightNo": "HNL201",
+            "duration": 11,
+            "price": 1880
+        },
+        {
+            "departureCity": "Honolulu",
+            "destinationCity": "Sydney",
+            "departureTime": "03:30 PM",
+            "flightNo": "HNL202",
+            "duration": 11,
+            "price": 1799
+        },
+        {
+            "departureCity": "Melbourne",
+            "destinationCity": "Sydney",
+            "departureTime": "05:00 PM",
+            "flightNo": "MEL203",
+            "duration": 2.5,
+            "price": 199
+        },
+        {
+            "departureCity": "Melbourne",
+            "destinationCity": "Sydney",
+            "departureTime": "11:30 AM",
+            "flightNo": "MEL202",
+            "duration": 2.5,
+            "price": 180
+        },
+        {
+            "departureCity": "Melbourne",
+            "destinationCity": "Sydney",
+            "departureTime": "06:00 PM",
+            "flightNo": "MEL203",
+            "duration": 2.75,
+            "price": 190
+        }
+    ]
+}
