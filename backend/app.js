@@ -18,24 +18,29 @@ const port = process.env.PORT || 5000;
 const bodyParser = require('body-parser');
 const Passenger = require("./models/passenger.js");
 const Flight = require("./models/flight.js");
-const { title } = require("process");
+const Account = require("./models/account.js");
 const Service = require("./models/service.js");
 
 // here
 const bcrypt = require('bcrypt')
 const passport = require('passport')
 const methodOverride = require('method-override')
-
 const initializePassport = require('./templates/passport-config.js');
 
-initializePassport(
-    passport, 
-    email => users.find(user => user.email === email),
-    id => users.find(user => user.id === id),
-)
+let users = [];
 
-const users = []
-// here
+async function getAllUsers() {
+    users = await Account.find() || [];
+}
+
+(async () => {
+    await getAllUsers();
+    initializePassport(
+        passport, 
+        email => users.find(user => user.email === email),
+        id => users.find(user => user.id === id),
+    );
+})();
 
 
 //register view engine
@@ -75,25 +80,25 @@ mongoose
     console.log("Connection failed!");
   });
 
-loggedIn = false
+let loggedIn = false
 app.get("/bookOnline",(req,res)=>{
-res.render('searchFlight', {title:"Search Flight"});
+res.render('searchFlight', {title:"Search Flight",loggedIn:loggedIn});
 });
 
 // here
 
-app.get('/', checkAuthenticated, (req, res) => {
-    res.render('index', { name: req.user.name, title:"Homepage"})
+app.get('/', (req, res) => {
+    res.redirect('index')
 })
 
 
 app.get('/index',(req,res)=>{
-    res.render("index",{title:"Homepage"})})
+    res.render("index",{title:"Homepage",loggedIn: loggedIn})})
 
 
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
-    res.render('login.ejs', {title:"Login"})
+    res.render('login.ejs', {title:"Login", loggedIn: loggedIn})
 })
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
@@ -104,19 +109,19 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 }))
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
-    res.render('register',{title:"register"})
+    res.render('register',{title:"register",loggedIn:loggedIn})
 })
 
 
 
 app.post('/register', checkNotAuthenticated,  async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        users.push({
-            id: Date.now().toString(),
-            name: req.body.name,
-            email: req.body.email,
-            password: hashedPassword
+        const data = req.body;
+        const hashedPassword = await bcrypt.hash(data.password, 10)
+        const user = await User.create({
+            name: data.name,
+            email: data.email,
+            password: hashedPassword,
         })
         res.redirect('/login')
     } catch {
@@ -126,6 +131,7 @@ app.post('/register', checkNotAuthenticated,  async (req, res) => {
 })
 
 app.get('/logout',(req,res)=>{
+    loggedIn = false;
     res.redirect(`/index?loggedIn=${loggedIn}`);
 })
 
@@ -140,7 +146,8 @@ app.delete('/logout', (req, res, next) => {
 
 
 app.get("/bookOnline",(req,res)=>{
-res.render('searchFlight', {title:"Search Flight"});
+res.render('searchFlight', {title:"Search Flight",loggedIn:loggedIn
+});
 });
 
 
@@ -206,6 +213,7 @@ app.post('/searchFlight', async (req,res)=>{
 })
 
 const moment = require('moment');
+const User = require('./models/account.js');
 
 app.get('/chooseTicket', (req, res) => {
     let flights = req.session.flights || [];
@@ -255,7 +263,7 @@ app.get('/chooseTicket', (req, res) => {
         }
     }
 
-    res.render('chooseTicket', { title: "Ticket", flights, message });}
+    res.render('chooseTicket', { title: "Ticket", flights, message,loggedIn:loggedIn });}
 )
 
 app.post('/chooseTicket', (req, res) => {
@@ -306,6 +314,7 @@ app.get('/chooseServices',(req,res)=>{
     res.render('chooseService',{
         title:"Services", 
         isReturnFlight: isReturnFlight,
+        loggedIn: loggedIn
     })
 })
 
@@ -372,12 +381,13 @@ app.get('/makePayment',async(req,res)=>{
         title: 'Payment',
     flightPrice:totalFlightPrice,
     servicePrice: totalServicePrice,
-    total: total
+    total: total,
+    loggedIn: loggedIn
 });
 })
 
 app.post('/makePayment',(req,res)=>{
-    res.render('successBooking',{title:"Success"})
+    res.render('successBooking',{title:"Success",loggedIn:loggedIn})
 })
 
 function capitalize(string) {
@@ -389,6 +399,7 @@ function capitalize(string) {
 
 function checkAuthenticated(req, res , next) {
     if (req.isAuthenticated()) {
+        loggedIn = true;
         return next()
     }
 
@@ -397,6 +408,8 @@ function checkAuthenticated(req, res , next) {
 
 function checkNotAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
+        loggedIn = true;
+        console.log("log in success")
         return res.redirect('/')
     }
     next()
