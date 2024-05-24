@@ -1,6 +1,6 @@
 <%- include('header'); %>
 
-<h1>Register</h1>
+<h1>Sign up</h1>
 <form action="/register" method="POST">
     <div>
         <label for="name">Name</label>
@@ -16,8 +16,13 @@
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required>
     </div>
-    <button type="submit">Register</button>
+    <button type="submit">Sign up</button>
 </form>
-<a href="/login">Login</a>
+<p>Already have an account? <a href="/login">Login</a></p>
 
+<% if (messages && messages.length > 0) { %>
+    <div class="error">
+        <%= messages[0] %>
+    </div>
+<% } %>
 <%- include('footer'); %>

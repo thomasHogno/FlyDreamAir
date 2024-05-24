@@ -44,32 +44,7 @@ issuingCountry: {
 expDate: {
     type: String,
     required: [true,"Please enter your expiration date"],
-},
-
-flights: {
-    type: [],
-    default: [],
-},
-
-seat: {
-    type: String,
-    default: -1,
-},
-
-baggage: {
-    type: Number,
-    default: 0,
-},
-
-priority: {
-    type: Boolean,
-    default: false,
-},
-
-insurance: {
-    type: Boolean,
-    default: false,
-},
+}
 },
 {
     timestamps: true,

@@ -20,11 +20,12 @@
                 <div class="user-dropdown">
                     <button class="dropbtn">user@example.com</button>
                     <div class="dropdown-content">
-                        <a href="/myAccount">My Account</a>
-                        <a href="/myBookings">My Bookings</a>
-                        <a href="/myFlightServices">My Flight Services</a>
-                        <a href="/logout">Log Out</a>
-                    </div>
+                        <button onclick="location.href='/myAccount'">My Account</button>
+                        <button onclick="location.href='/myBookings'">My Bookings</button>
+                        <button onclick="location.href='/myFlightServices'">My Flight Services</button>
+                        <form id="logout-form" action="/logout?_method=DELETE" method="POST">
+                            <button type="submit">Logout</button>
+                        </form>
                 </div>
                 <% } else { %>
                     <div>

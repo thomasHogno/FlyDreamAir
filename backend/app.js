@@ -1,174 +1,181 @@
-// here
-
 if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config()
+    require('dotenv').config();
 }
-// here
 
-const mongoose = require("mongoose"); 
-// const jwt = require("jsonwebtoken");
-// const multer = require("multer");
-// const cors = require("cors")
-const express = require("express")
+const mongoose = require("mongoose");
+const express = require("express");
 const session = require('express-session');
-const dotenv = require("dotenv").config();
-const app = express();
 const path = require('path');
-const port = process.env.PORT || 5000; 
 const bodyParser = require('body-parser');
+const flash = require('connect-flash');
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+const methodOverride = require('method-override');
+const initializePassport = require('./templates/passport-config.js');
+const Account = require("./models/account.js");
 const Passenger = require("./models/passenger.js");
 const Flight = require("./models/flight.js");
-const Account = require("./models/account.js");
 const Service = require("./models/service.js");
+const app = express();
+const port = process.env.PORT || 5000;
 
-// here
-const bcrypt = require('bcrypt')
-const passport = require('passport')
-const methodOverride = require('method-override')
-const initializePassport = require('./templates/passport-config.js');
-
-let users = [];
-
-async function getAllUsers() {
-    users = await Account.find() || [];
+async function getUserByEmail(email) {
+    return await Account.findOne({ email: email });
 }
 
-(async () => {
-    await getAllUsers();
-    initializePassport(
-        passport, 
-        email => users.find(user => user.email === email),
-        id => users.find(user => user.id === id),
-    );
-})();
+async function getUserById(id) {
+    return await Account.findById(id).exec();
+}
 
+initializePassport(
+    passport, 
+    getUserByEmail, 
+    getUserById
+);
 
-//register view engine
 app.set('view engine', 'ejs');
-app.set('views','templates');
+app.set('views', 'templates');
 app.use(express.static(path.join(__dirname, 'static')));
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(session({
     secret: process.env.SESSION_SECRET, // Change this to your secret key
     resave: false,
     saveUninitialized: false
 }));
-
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(methodOverride('_method'));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const username = "ddsgdfg";
-
-// here
-
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(methodOverride('_method'))
-//here
-
-mongoose
-  .connect(
-    "mongodb+srv://csit214:jVxpHaaTBrO7AhY6@flydreamdb.pgvinhz.mongodb.net/?retryWrites=true&w=majority&appName=FlyDreamDB"  )
-  .then(() => {
-    console.log("Connected to database!");
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+mongoose.connect("mongodb+srv://csit214:jVxpHaaTBrO7AhY6@flydreamdb.pgvinhz.mongodb.net/?retryWrites=true&w=majority&appName=FlyDreamDB")
+    .then(() => {
+        console.log("Connected to database!");
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+        });
+    })
+    .catch(() => {
+        console.log("Connection failed!");
     });
-  })
-  .catch(() => {
-    console.log("Connection failed!");
-  });
 
-let loggedIn = false
-app.get("/bookOnline",(req,res)=>{
-res.render('searchFlight', {title:"Search Flight",loggedIn:loggedIn});
+let loggedIn = false;
+
+app.get("/bookOnline", (req, res) => {
+    res.render('searchFlight', { title: "Search Flight", loggedIn: loggedIn });
 });
 
-// here
-
 app.get('/', (req, res) => {
-    res.redirect('index')
-})
+    res.redirect('index');
+});
 
+app.get('/index', (req, res) => {
+    res.render("index", { title: "Homepage", loggedIn: loggedIn });
+});
 
-app.get('/index',(req,res)=>{
-    res.render("index",{title:"Homepage",loggedIn: loggedIn})})
+app.get('/login', (req, res) => {
+    res.render('login', { title: "Login", loggedIn: loggedIn, messages: req.flash('error') });
+});
 
+app.post('/login', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.error('Error during authentication:', err);
+            return next(err);
+        }
+        if (!user) {
+            console.log('Authentication failed:', info.message);
+            return res.render('login', { title: "Login", loggedIn: false, messages: [info.message] });
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error('Error during login:', err);
+                return next(err);
+            }
+            console.log("log in success");
+            loggedIn = true; // Set loggedIn to true upon successful login
+            return res.redirect('/');
+        });
+    })(req, res, next);
+});
 
-
-app.get('/login', checkNotAuthenticated, (req, res) => {
-    res.render('login.ejs', {title:"Login", loggedIn: loggedIn})
-})
-
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: true
-
-}))
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
-    res.render('register',{title:"register",loggedIn:loggedIn})
-})
+    res.render('register', { title: "Register", loggedIn: loggedIn, messages: req.flash('error')});
+});
 
-
-
-app.post('/register', checkNotAuthenticated,  async (req, res) => {
+app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
         const data = req.body;
-        const hashedPassword = await bcrypt.hash(data.password, 10)
-        const user = await User.create({
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        const user = new Account({
             name: data.name,
             email: data.email,
             password: hashedPassword,
-        })
-        res.redirect('/login')
-    } catch {
-        res.redirect('/register')
+        });
+        await user.save();
+        res.redirect('/login');
+    } catch (err) {
+        if (err.code === 11000) {
+            // Duplicate key error
+            return res.render('register', {
+                title: "Register",
+                loggedIn: false,
+                messages: ['This email address is already taken.']
+            });
+        }
+        return res.render('register', {
+            title: "Register",
+            loggedIn: false,
+            messages: ['An error occurred during registration. Please try again.']
+        });
     }
-    console.log(users)
-})
+});
 
-app.get('/logout',(req,res)=>{
-    loggedIn = false;
-    res.redirect(`/index?loggedIn=${loggedIn}`);
-})
+
 
 app.delete('/logout', (req, res, next) => {
     req.logOut((err) => {
-        if (err) {
-            return next(err);
-        }
-        res.redirect('/login')
-    })
-})
+        if (err) { return next(err); }
+        req.session.destroy((err) => {
+            if (err) return next(err);
+            loggedIn = false; // Reset loggedIn status on logout
+            res.redirect('/login');
+        });
+    });
+});
 
+
+app.get('/logout', (req, res) => {
+    console.log("log out")
+    loggedIn = false;
+    res.redirect('/'); // Redirect to login page
+});
 
 app.get("/bookOnline",(req,res)=>{
-res.render('searchFlight', {title:"Search Flight",loggedIn:loggedIn
+    res.render('searchFlight', {title:"Search Flight",loggedIn:loggedIn
 });
+    
+app.get('/dashboard', checkAuthenticated, (req, res) => {
+    res.render('dashboard', { title: "Dashboard", loggedIn: loggedIn });
+    });
 });
 
+app.get('/contactUs', (req, res) => {
+    res.render('contactUs', { title: "Contact Us", form_submitted: false, loggedIn: loggedIn });
+});
 
+app.get('/about', (req, res) => {
+    res.render('about', { title: "About Us", loggedIn: loggedIn });
+});
 
-app.get('/dashboard',(req,res)=>{
-    res.render('dashboard',{title:"Dashboard","loggedIn":loggedIn})
-})
+app.get('/myAccount', checkAuthenticated, (req, res) => {
+    res.render('myAccount', { title: "My Account", loggedIn: loggedIn });
+});
 
-app.get('/contactUs',(req,res)=>{
-    res.render('contactUs',{title:"Contact Us",form_submitted: false, loggedIn: loggedIn})
-})
-
-app.get('/about',(req,res)=>{
-    res.render('about',{title:"About Us",loggedIn: loggedIn})
-})
-
-app.get('/myAccount',(req,res)=>{
-    res.render('myAccount',{title:"My Account",loggedIn: loggedIn})
-})
-
-// app.get('/myBookings', async (req,res)=>{
+//app.get('/myBookings', async (req,res)=>{
 //     let flights = []
 //     if(username){
 //         flights = await Service.find({username:username});
@@ -176,12 +183,16 @@ app.get('/myAccount',(req,res)=>{
 //     res.render('myBookings',{title:"My Bookings",loggedIn: loggedIn,flights:flights})
 // })
 
+app.get('/myBookings', (req, res) => {
+    res.render('myBookings',{title:"My Bookings",loggedIn: loggedIn})
+})
+
 app.get('/myFlightServices',(req,res)=>{
-    res.render('myFlightServices',{title:"My Fligth Services",loggedIn: loggedIn})
+    res.render('myService',{title:"My Flight Services",loggedIn: loggedIn})
 })
 
 app.post('/submit_inquiry',(req,res)=>{
-    res.redirect('contactUs',{form_submitted: true})})
+    res.render('successContact',{title:"Inform",loggedIn:loggedIn})});
 
 
 app.post('/searchFlight', async (req,res)=>{
@@ -323,44 +334,35 @@ app.post('/chooseServices', async (req,res)=>{
         const passengerPassport = req.session.passengerPassport;
         const departureFlightNo = req.session.departureFlightNo;
         const data = req.body;
-        const departureFoodPrice = data.departureFood;
-        let departureFood = "";
-        if(departureFoodPrice==0){
-            departureFood = "No";
-        }else if(departureFoodPrice == "10"){
-            departureFood = "Chicken Rice + Free Drink";
+        const foodPrice = data.food;
+        let food = "";
+        if(foodPrice==0){
+            food = "No";
+        }else if(foodPrice == "10"){
+            food = "Chicken Rice + Free Drink";
         }else{
-            departureFood = "Singapore Noodle + Free Drink"
+            food = "Singapore Noodle + Free Drink"
         }
         req.session.servicePrice = data.totalFee;
         const service = await Service.create(
             {"passengerPassport":passengerPassport,
             "flightNo":departureFlightNo,
-            "seat": data.departureSeat,
-            "baggage": data.departureBaggage,
-            "priority": data.departurePriority,
-            "insurance": data.departureInsurance,
-            "food": departureFood,
+            "seat": data.seat,
+            "baggage": data.baggage,
+            "priority": data.priority,
+            "insurance": data.insurance,
+            "food": food,
             "flightClass": req.session.departureFlightClass
         });
         if(req.session.returnFlightNo){
-            const returnFoodPrice = data.returnFood;
-            let returnFood = "";
-            if(returnFoodPrice==0){
-                returnFood = "No";
-            }else if(returnFoodPrice == "10"){
-                returnFood = "Chicken Rice + Free Drink";
-            }else{
-                returnFood = "Singapore Noodle + Free Drink"
-            }
             const service = await Service.create(
                 {"passengerPassport":passengerPassport,
                 "flightNo":req.session.returnFlightNo,
-                "seat": data.returnSeat,
-                "baggage": data.returnBaggage,
-                "priority": data.returnPriority,
-                "insurance": data.returnInsurance,
-                "food": returnFood,
+                "seat": data.seat,
+                "baggage": data.baggage,
+                "priority": data.priority,
+                "insurance": data.insurance,
+                "food": food,
                 "flightClass": req.session.returnFlightClass
             });
         }
@@ -396,23 +398,18 @@ function capitalize(string) {
 
 // here
 
-
-function checkAuthenticated(req, res , next) {
+function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         loggedIn = true;
-        return next()
+        return next();
     }
-
-    res.redirect('/login')
+    res.redirect('/login');
 }
 
 function checkNotAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         loggedIn = true;
-        console.log("log in success")
-        return res.redirect('/')
+        return res.redirect('/');
     }
-    next()
+    next();
 }
-
-// here
