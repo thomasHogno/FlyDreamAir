@@ -1,0 +1,13 @@
+<%- include('header'); %>
+<div class="success-payment">
+    <h2>Payment Successful</h2>
+    <p>Thank you for your payment. Your transaction has been successfully processed.</p>
+    <p>You will be redirected to the About page shortly.</p>
+</div>
+<script>
+    // Redirect to the About page after 45 seconds
+    setTimeout(() => {
+        window.location.href = "/about";
+    }, 7000); // 7 seconds in milliseconds
+</script>
+    <%- include('footer'); %>

@@ -1,0 +1,477 @@
+<%- include('header'); %>
+<style>
+:root {
+    --primaryColor: #333;
+    --primaryColorDark: #0056b3;
+    --textDark: #0f172a;
+    --textLight: #64748b;
+    --extraLight: #f1f5f9;
+    --maxWidth: 1200px;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.body-img {
+    background-image: url(images/melbourne2.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+    position: fixed;
+    width: 100%;
+    height: 110%;
+    z-index: -120;
+}
+
+.main-body {
+    position: relative;
+    width: 100%;
+    max-width: var(--maxWidth);
+    margin: 0 auto;
+    overflow: hidden;
+    min-width: 100vh;
+}
+
+.main-body img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+}
+
+.text-overlay {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    animation: fadeIn 1s ease-in-out;
+    z-index: 10;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.text-overlay h1 {
+    font-size: 3rem;
+    font-weight: 600;
+}
+
+.booking-container {
+    position: relative;
+    top: 0px;
+    width: 100%;
+    max-width: var(--maxWidth);
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    border-radius: 0;
+}
+
+.book-trip {
+    text-align: center;
+    padding: 10px;
+    font-weight: 600;
+    color: white;
+    background-color: var(--primaryColor);
+    border-radius: 5px;
+}
+
+.flight-type {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.flight-type p {
+    margin: 0;
+    font-weight: 500;
+}
+
+.flight-type span {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.flight-type input[type="radio"] {
+    margin-right: 10px;
+}
+
+.line {
+    margin: 20px 0;
+    border: 1px solid var(--extraLight);
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.form-group {
+    flex: 1;
+    min-width: calc(50% - 10px);
+}
+
+.input-content {
+    width: 100%;
+}
+
+.input-group {
+    position: relative;
+    width: 100%;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 15px 10px 5px;
+    font-size: 1rem;
+    border: 1px solid var(--textLight);
+    border-radius: 5px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: var(--primaryColor);
+}
+
+.input-group label {
+    position: absolute;
+    top: 12px;
+    left: 10px;
+    font-size: 0.9rem;
+    color: var(--textLight);
+    pointer-events: none;
+    transition: all 0.3s;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label,
+.input-group select:focus + label,
+.input-group select:not(:placeholder-shown) + label {
+    top: -10px;
+    left: 5px;
+    font-size: 0.75rem;
+    color: var(--primaryColor);
+    background: white;
+    padding: 0 5px;
+}
+
+.btn {
+    padding: 15px 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
+    background-color: var(--primaryColor);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: var(--primaryColorDark);
+}
+
+.trendings-container {
+    margin-top: 40px;
+    padding-bottom: 40px;
+}
+
+.trendings-container h1 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    width: 50%;
+    transform: translateX(50%);
+    box-shadow: white;
+    border-radius: 10px;
+    color: white;
+}
+
+.trendings-container h1 span {
+    text-decoration: underline;
+    color: white;
+    font-style: bold;
+}
+
+.trendings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.item {
+    flex: 1;
+    min-width: calc(33.333% - 20px);
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.item:hover {
+    transform: translateY(-5px);
+}
+
+.destination-info {
+    padding: 20px;
+}
+
+.destination-info h3 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.destination-info p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.destination-info p span {
+    color: #333;
+    font-weight: 500;
+}
+
+.condition {
+    margin-top: 20px;
+    font-size: 0.875rem;
+    color: var(--textLight);
+    text-align: center;
+}
+</style>
+<div class="body-img"></div>
+<div class="main-body">
+    <img src="images/airplane2.jpg" alt=""; width="10%">
+    <div class="text-overlay">
+        <h1>Welcome Aboard!</h1>
+    </div>
+    <section class="booking-container">
+        <div class="book-trip">
+            <span>BOOK TRIP</span>
+        </div>
+        <hr class="line">
+        <form action="/searchFlight" method="post" novalidate>
+            <div class="flight-type">
+                <p>Please select flight type</p>
+                <span>
+                    <span>One Way</span>
+                    <input class="flightType" type="radio" name="flightType" value="One Way">
+                    <span>Round Trip</span>
+                    <input class="flightType" type="radio" name="flightType" value="Round Trip" >
+                </span>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <div class="input-content">
+                        <div class="input-group">
+                            <input type="text" name="departureCity" id="departureCity" required>
+                            <label for="" style="font-size: large; transform: translateX(70%);">From</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-content">
+                        <div class="input-group">
+                            <input type="text" name="destinationCity" id="destinationCity" required>
+                            <label for="" style="font-size: large; transform: translateX(70%);">To</label>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="form-group">
+                    <div class="input-content">
+                        <div class="input-group">
+                            <input type="date" name="departureDate" id="departureDate" required>
+                            <label for="departure">Departure date</label>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="form-group return-group">
+                    <div class="input-content">
+                        <div class="input-group">
+                            <input type="date" name="returnDate" id="returnDate" required>
+                            <label for="return">Return date</label>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+            <div class="form-row">
+                <button type="submit" class="btn" id="searchButton">Search</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="trendings-container">
+        <h1>Latest flight deals from: <span>SYDNEY</span></h1>
+
+        <section class="trendings-section">
+            <div class="trendings">
+                <div class="item">
+                    <div class="destination-info">
+                        <h3>Melbourne</h3>
+                        <p>Economy one way</p>
+                        <p>From <span>AUD 159*</span></p>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="trendings">
+                <div class="item">
+                    <div class="destination-info">
+                        <h3>Ho Chi Minh City</h3>
+                        <p>Economy one way</p>
+                        <p>From <span>AUD 588*</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trendings">
+                <div class="item">
+                    <div class="destination-info">
+                        <h3>Honolulu</h3>
+                        <p>Business return</p>
+                        <p>From <span>AUD 6,097*</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trendings">
+                <div class="item">
+                    <div class="destination-info">
+                        <h3>Los Angeles</h3>
+                        <p>Business return</p>
+                        <p>From <span>AUD 7,299*</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trendings">
+                <div class="item">
+                    <div class="destination-info">
+                        <h3>Singapore</h3>
+                        <p>Economy one way</p>
+                        <p>From <span>AUD 489*</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trendings">
+                <div class="item">
+                    <div class="destination-info">
+                        <h3>Brisbane</h3>
+                        <p>Economy one way</p>
+                        <p>From <span>AUD 159*</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <button class="btn">
+            View more deals
+        </button>
+        <p class="condition">*Conditions apply.</p>
+    </section>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    $(document).ready(function() {
+        $('input[type="radio"]').change(function() {
+            if ($(this).val() === 'One Way') {
+                $('#returnDate').parent().hide(); // Hides the parent div of the return date input field
+            } else {
+                $('#returnDate').parent().show(); // Shows the parent div of the return date input field
+            }
+        });
+
+        $('form').on('submit', function(event) {
+            let isValid = true;
+            let errorMessage = '';
+
+            // Check if flight type is selected
+            if (!$('input[name="flightType"]:checked').val()) {
+                isValid = false;
+                errorMessage += 'Please select a flight type.\n';
+            }
+
+            // Check if departure city is filled
+            if (!$('#departureCity').val()) {
+                isValid = false;
+                errorMessage += 'Please fill in the departure city.\n';
+            }
+
+            // Check if destination city is filled
+            if (!$('#destinationCity').val()) {
+                isValid = false;
+                errorMessage += 'Please fill in the destination city.\n';
+            }
+
+            // Check if departure date is filled
+            if (!$('#departureDate').val()) {
+                isValid = false;
+                errorMessage += 'Please fill in the departure date.\n';
+            }
+
+            // Check if return date is filled, only if "Round Trip" is selected
+            if ($('input[name="flightType"]:checked').val() === 'Round Trip') {
+                    if (!$('#returnDate').val()) {
+                        isValid = false;
+                        errorMessage += 'Please fill in the return date.\n';
+                    } else {
+                        // Check if return date is not earlier than departure date
+                        let departureDate = new Date($('#departureDate').val());
+                        let returnDate = new Date($('#returnDate').val());
+                        if (returnDate < departureDate) {
+                            isValid = false;
+                            errorMessage += 'Return date cannot be earlier than the departure date.\n';
+                        }
+                    }
+            }
+
+            // If the form is not valid, prevent submission and alert the user
+            if (!isValid) {
+                alert(errorMessage);
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+<%- include('footer'); %>

@@ -1,0 +1,22 @@
+<%- include('header'); %>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Contact Us</h1>
+        </div>
+        <% if (form_submitted) { %>
+            <div class="success-message">
+                Your form has been submitted successfully.
+            </div>
+        <% } %>
+        <form action="/submit_inquiry" method="POST">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="customer_number">Customer Number:</label>
+            <input type="text" id="customer_number" name="customer_number">
+            <label for="inquiry">Inquiry:</label>
+            <textarea id="inquiry" name="inquiry" rows="4" required></textarea>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <%- include('footer'); %>

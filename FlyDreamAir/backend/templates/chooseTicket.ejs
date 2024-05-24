@@ -1,0 +1,379 @@
+<%- include('header'); %>
+<style>
+:root{
+    --primaryColor: #333;
+    --primaryColorDark: #334c99;
+    --textDark: #0f172a;
+    --textLight: #64748b;
+    --extraLight: #f1f5f9;
+    --maxWidth: 1200px;
+
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: Arial, sans-serif; 
+}
+
+.body-img {
+    background-image: url(images/singapore.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -120;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.text-overlay {
+    position: absolute;
+    top: 18%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 10px;
+    animation: fadeIn 1s ease-in-out;
+    z-index: 10;
+}
+
+.dflight {
+    border: 0px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 25%;
+    margin: auto;
+    background: rgba(0, 0, 0, 0.1);
+
+
+
+}
+
+.custom-select {
+      width: 20px;
+    }
+    select {
+        width: 25%;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-chevron-down" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/> </svg>') no-repeat right 10px center;
+        background-color: white;
+        background-size: 12px;
+        text-align: center;
+    }
+    option {
+        padding: 10px;
+    }
+
+
+.flight-heading-container {
+    width: 100%;
+    margin: 30px auto; 
+    align-items: center;
+}
+
+#flight-heading {
+    font-weight: 500;
+    font-size: 30px;
+    margin: 30px;
+    margin-right: 40px;
+}
+
+.flight-details-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.flight-details-container.selected .flight-details{
+    background-color: rgb(236, 236, 236); 
+}
+
+.flight-details{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--primaryColor);
+    width: 70%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 10px;
+    background-color: rgb(236, 236, 236);
+}
+
+.flight-details-row{
+    display: flex;
+    margin-left: 10px;
+    padding: 5px;
+}
+
+.detail{
+    flex: 1;
+    text-align: center;
+}
+
+.row1{
+    color: var(--textDark);
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.row2{
+    color: var(--textLight);
+    font-size: 15px;
+}
+
+.btn{
+    padding: .75rem 2rem;
+    outline: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
+    background-color: var(--primaryColor);
+    border-radius: .2rem;
+    cursor: pointer;
+    transition: 0.3s;
+    transform: translateX(-450%);
+}
+
+.buttonCell{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#submitBtn{
+    margin: 40px auto; 
+    font-size: 18px;
+    margin-right: 15%;
+    display: flex;
+    justify-content: right; 
+    align-items: center;
+}
+
+.flight-heading{
+    /* width: 30%; */
+    border: 1px solid var(--primaryColor);
+    background-color: rgb(242, 246, 250);
+    padding-bottom: 20px;
+    margin-top: 20px;
+}
+
+.flight-heading h1{
+    padding: 10px 25px;
+    font-size: 20px;
+    border-bottom: 1px solid var(--primaryColor);
+    font-weight: 500;
+    text-align: center;
+    background-color: var(--primaryColor);
+    color: white;
+    margin-bottom: 10px;
+}
+
+.flight-heading p{
+    font-weight: 400;
+    font-size: 18px;
+    padding: 10px 25px;
+}
+</style>
+<div class="body-img"></div>
+<div id="flights" class="tab-content">
+    <h1 id="flight-heading">
+        <% if (message) { %>
+            <div class="no-flight-message">
+                <h1><%= message %></h1>
+            </div>
+        <% } else { %>
+            <h1 class="text-overlay">Ticket Confirmation</h1>
+        </h1>
+        <br>
+        <div class="flight-heading-container">
+            <form method="post" action="/chooseTicket">
+                <h1 class="dflight">Departure Flight</h1> 
+                <div class="form-row">
+                    <div class="form-group">
+                        <select name="departureFlightClass">
+                            <option value="economy"><div>Economy Class : $0</div></option>
+                            <option value="business"><span>Business Class: $100</span></option>
+                            <option value="first"><span>First Class: $300</span></option>
+                        </select>
+                    </div>
+                <div class="departure-flight">
+                    <% flights[0].forEach(flight => { %>
+                        <div class="flight-details-container">
+                            <div class="flight-details">
+                                <div class="flight-details-row">
+                                    <div class="detail row1"><%= flight.departureCity %></div>
+                                    <div class="detail row1">>>>>>>>>>>></div>
+                                    <div class="detail row1"><%= flight.destinationCity %></div>
+                                    <div class="detail row1"><%= flight.flightNo ? flight.flightNo : "Flight Number N/A" %></div>
+                                    <div class="detail row1 buttonCell">
+                                        <input type="radio" class="selectButtons" name="departureFlightNo" value="<%= flight.flightNo %>" required> $<%= flight.price %> AUD
+                                    </div>
+                                </div>
+                                <div class="flight-details-row">
+                                    <div class="detail row2"><%= flight.departureDate %></div>
+                                    <div class="detail row2"></div>
+                                    <div class="detail row2"><%= flight.arrivalDate %></div>
+                                    <div class="detail row2"><%= flight.duration %> hours</div>
+                                    <div class="detail row2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <% if (flights.length > 1) { %>
+                    <h1>Return flight:</h1>
+                    <div class="form-group">
+                        <select name="returnFlightClass">
+                            <option value="economy"><div>Economy Class : $0</div></option>
+                            <option value="business"><span>Business Class: $100</span></option>
+                            <option value="first"><span>First Class: $300</span></option>
+                        </select>
+                    </div>
+                    <div class="return-flight">
+                        <% flights[1].forEach(flight => { %>
+                            <div class="flight-details-container">
+                                <div class="flight-details">
+                                    <div class="flight-details-row">
+                                        <div class="detail row1"><%= flight.departureCity %></div>
+                                        <div class="detail row1">>>>>>>>>>>></div>
+                                        <div class="detail row1"><%= flight.destinationCity %></div>
+                                        <div class="detail row1"><%= flight.flightNo ? flight.flightNo : "Flight Number N/A" %></div>
+                                        <div class="detail row1 buttonCell">
+                                            <input type="radio" class="selectButtons" name="returnFlightNo" value="<%= flight.flightNo %>" required> <%= flight.price %> AUD
+                                        </div>
+                                    </div>
+                                    <div class="flight-details-row">
+                                        <div class="detail row2"><%= flight.departureDate %></div>
+                                        <div class="detail row2"></div>
+                                        <div class="detail row2"><%= flight.arrivalDate %></div>
+                                        <div class="detail row2"><%= flight.duration %> hours</div>
+                                        <div class="detail row2"></div>
+                                    </div>
+                                </div>
+                            </div>6
+                        <% }); %>
+                    </div>
+                <% } %>
+                <div id="total-price-container">
+                    <h2>Total Price: $<span id="total-price">0</span> AUD</h2>
+                    <input type="hidden" name="totalFlightPrice" id="totalFlightPrice" value="0">
+                </div>
+                <button type="submit" class="btn" id="submitBtn">Submit</button>
+            </form>
+        <% } %>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function() { 
+    function extractPrice(text) {
+        const priceText = text.replace(/[^\d.]/g, ''); // Remove non-numeric characters except decimal point
+        return parseFloat(priceText) || 0; // Return the price as a float, or 0 if parsing fails
+    }
+
+    function calculateTotalPrice() {
+        let totalPrice = 0;
+
+        // Get selected departure flight price
+        const selectedDepartureFlight = $('input[name="departureFlightNo"]:checked');
+        if (selectedDepartureFlight.length > 0) {
+            const departurePriceText = selectedDepartureFlight.closest('.buttonCell').text();
+            totalPrice += extractPrice(departurePriceText);
+        }
+
+        // Get selected return flight price
+        const selectedReturnFlight = $('input[name="returnFlightNo"]:checked');
+        if (selectedReturnFlight.length > 0) {
+            const returnPriceText = selectedReturnFlight.closest('.buttonCell').text();
+            totalPrice += extractPrice(returnPriceText);
+        }
+
+        // Get selected flight class price for departure
+        const departureClass = $('select[name="departureFlightClass"]').val();
+        if (departureClass === 'business') totalPrice += 100;
+        if (departureClass === 'first') totalPrice += 300;
+
+        // Get selected flight class price for return
+        const returnClass = $('select[name="returnFlightClass"]').val();
+        if (returnClass === 'business') totalPrice += 100;
+        if (returnClass === 'first') totalPrice += 300;
+
+        $('#total-price').text(totalPrice);
+        $('#totalFlightPrice').val(totalPrice); // Update the hidden input field
+    }
+
+    $('input.selectButtons').change(function() {
+        var container = $(this).closest('.flight-details-container');
+        var isDepartureFlight = $(this).attr('name') === 'departureFlightNo';
+
+        if (isDepartureFlight) {
+            // For departure flight
+            $('.departure-flight .flight-details-container').removeClass('selected');
+            container.addClass('selected');
+        } else {
+            // For return flight
+            $('.return-flight .flight-details-container').removeClass('selected');
+            container.addClass('selected');
+        }
+
+        calculateTotalPrice();
+    });
+
+    $('select[name="departureFlightClass"], select[name="returnFlightClass"]').change(function() {
+        calculateTotalPrice();
+    });
+
+    $('form').submit(function(event) {
+        // Check if departure flight is selected
+        if (!$('input[name="departureFlightNo"]:checked').val()) {
+            alert('Please select a departure flight.');
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+
+        // Check if return flight is selected when there are return flights available
+        if ($('.return-flight').length && !$('input[name="returnFlightNo"]:checked').val()) {
+            alert('Please select a return flight.');
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+
+    calculateTotalPrice(); // Initial calculation
+});
+</script>
+    <%- include('footer'); %>

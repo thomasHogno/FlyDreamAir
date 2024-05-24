@@ -1,0 +1,47 @@
+<%- include('header'); %>
+
+
+    <h1>Personal Information</h1>
+    <form action="/fillPassengerInfor" method="post">
+        <div class="input">
+            <div class="selection1">
+                <label for="givenName"> Given name:</label>
+                <br>
+                <input type="text" name="givenName" id="givenName" required>
+                <br>
+                <label for="surname">Surname:</label>
+                <br>
+                <input type="text" name="surname" id="surname" required>
+                <br>
+                <label for="phone">Phone number</label>
+                <br>
+                <input type="text" name="phone" id="phone" required>
+                <br>
+                <label for="address">Address:</label>
+                <br>
+                <input type="text" name="address" id="address" required>
+                <br>
+                <label for="postcode">Postcode</label>
+                <br>
+                <input type="text" name="postcode" id="postcode">
+                <br>
+                <label for="memberNumber">Member number:</label>
+                <br>
+                <input type="text" name="memberNumber" id="memberNumber">
+                <h3>ID INFORMATION:</h3>
+                <label for="passport">Passport</label>
+                <br>
+                <input type="text" name="passport" id="passport" required>
+                <br>
+                <label for="issuingCountry">Issuing country:</label>
+                <br>
+                <input type="text" name="issuingCountry" id="issuingCountry">
+                <br>
+                <label for="expDate">Expiration date(DD/MM/YYYY)</label>
+                <br>
+                <input type="text" name="expDate" id="expDate">
+            </div>
+        </div>
+        <button type="submit" class="button-17">Next</button>
+    </form>
+    <%- include('footer'); %>

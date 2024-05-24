@@ -1,0 +1,198 @@
+<%- include('header'); %>
+<style>
+:root{
+    --primaryColor: #333;
+    --primaryColorDark: #334c99;
+    --textDark: #0f172a;
+    --textLight: #64748b;
+    --extraLight: #f1f5f9;
+    --maxWidth: 1200px;
+
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: Arial, sans-serif; 
+}
+
+
+.flight-heading-container {
+    width: 100%;
+    margin: 30px auto; 
+    align-items: center;
+}
+
+#flight-heading {
+    font-weight: 500;
+    font-size: 30px;
+    margin: 30px;
+    margin-right: 40px;
+}
+
+.flight-details-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.flight-details-container.selected .flight-details{
+    background-color: rgb(236, 236, 236); 
+}
+
+.flight-details{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--primaryColor);
+    width: 70%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.flight-details-row{
+    display: flex;
+    margin-left: 10px;
+    padding: 5px;
+}
+
+.detail{
+    flex: 1;
+    text-align: center;
+}
+
+.row1{
+    color: var(--textDark);
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.row2{
+    color: var(--textLight);
+    font-size: 15px;
+}
+
+.btn{
+    padding: .75rem 2rem;
+    outline: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
+    background-color: var(--primaryColor);
+    border-radius: .2rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.buttonCell{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#submitBtn{
+    margin: 40px auto; 
+    font-size: 18px;
+    margin-right: 15%;
+    display: flex;
+    justify-content: right; 
+    align-items: center;
+}
+
+.flight-heading{
+    /* width: 30%; */
+    border: 1px solid var(--primaryColor);
+    background-color: rgb(242, 246, 250);
+    padding-bottom: 20px;
+    margin-top: 20px;
+}
+
+.flight-heading h1{
+    padding: 10px 25px;
+    font-size: 20px;
+    border-bottom: 1px solid var(--primaryColor);
+    font-weight: 500;
+    text-align: center;
+    background-color: var(--primaryColor);
+    color: white;
+    margin-bottom: 10px;
+}
+
+.flight-heading p{
+    font-weight: 400;
+    font-size: 18px;
+    padding: 10px 25px;
+}
+</style>
+
+    <div id="flights" class="tab-content">
+        <h1 id="flight-heading">
+            <% if (message) { %>
+                <div class="no-flight-message">
+                    <h1><%= message %></h1>
+                </div>
+            <% } else { %>
+                <h1>Ticket Confirmation</h1>
+        </h1>
+        <div class="flight-heading-container">
+            <form method="post" action="/chooseTicket">
+                <% flights.forEach(flight => { %>
+                    <div class="flight-details-container">
+                        <div class="flight-details">
+                            <div class="flight-details-row">
+                                <div class="detail row1"><%= flight.departureCity %></div>
+                                <div class="detail row1">>>>>>>>>>>></div>
+                                <div class="detail row1"><%= flight.destinationCity %></div>
+                                <div class="detail row1"><%= flight.flightNo ? flight.flightNo : "Flight Number N/A" %></div>
+                                <div class="detail row1 buttonCell">
+                                    <button type="button" class="btn selectButtons" id="selectBtn"><%= flight.price %> AUD</button>
+                                </div>
+                            </div>
+                            <div class="flight-details-row">
+                                <div class="detail row2"><%= flight.departureDate %></div>
+                                <div class="detail row2"></div>
+                                <div class="detail row2"><%= flight.arrivalDate %></div>
+                                <div class="detail row2"><%= flight.duration %> hours</div>
+                                <div class="detail row2"></div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+                <input type="text" name="flightNo" is="flightNo" style="display: none;" >
+                <button type="submit" class="btn" id="submitBtn">Submit</button>
+            </form>
+                <% } %>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+            $(document).ready(function() { 
+                $('.btn.selectButtons').click(function(event) {
+                    event.preventDefault(); // Prevent the button's default behavior
+
+                $('.flight-details-container').removeClass('selected');
+                var container = $(this).closest('.flight-details-container');
+                container.addClass('selected');
+
+                // Store the selected flight number in a hidden input field
+                var selectedFlightNo = $(this).closest('.flight-details-container').find('.detail.row1:last').text().trim();
+                $('#flightNo').val(selectedFlightNo);
+            });
+
+            $('form').submit(function(event) {
+                // Check if no flight is selected
+                if (!$('.flight-details-container.selected').length) {
+                    alert('Please select a flight.');
+                    event.preventDefault(); // Prevent form submission
+                }
+            }); 
+        })
+    </script>
+    <%- include('footer'); %>
