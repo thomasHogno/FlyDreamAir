@@ -17,3 +17,4 @@
     Start the server: node app.js
     or for development with nodemon:    nodemon app.js
     Open your web browser and navigate to http://localhost:5000 (or your specified port) to access the application.
+    Our dataset are currently developed, it will only include one-way and round trip from Sydney to Melbourne, Brisbane, Singapore, Honululu, Ho Chi Minh City and Los Angeles.
